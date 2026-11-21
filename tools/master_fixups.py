@@ -29,6 +29,13 @@ FIXUPS = {
         '        ],\n'
         '        templates_srcs = ["detail/dds_fastrtps/{}__type_support.cpp"],',
     )],
+    # ros2cli imports colorama (ros2cli.color) but the overlay doesn't depend on it, although it is in the
+    # pip lock: `ros2 ...` and everything that drives it (sros2, ros2topic, ros2pkg, ...) fails to import.
+    "ros2cli": [(
+        "BUILD.bazel",
+        '        requirement("argcomplete"),\n',
+        '        requirement("argcomplete"),\n        requirement("colorama"),\n',
+    )],
     # Upstream merged rmw_fastrtps_shared_cpp into rmw_fastrtps_cpp (tracked in mjcarroll/ros-project-management#82):
     # drop the old module dependency, resolve merged `rmw_fastrtps_shared_cpp/...` includes from src/, and carry
     # over the old shared module's other dependencies.
