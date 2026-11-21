@@ -1,0 +1,2 @@
+{"repo": "ros2/system_tests", "ref": "rolling", "subdir": "test_communication",
+ "template": "test_msgs"}

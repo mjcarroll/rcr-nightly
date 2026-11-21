@@ -1,0 +1,157 @@
+# Copyright 2026 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@launch_testing_ros//:defs.bzl", "launch_ros_test")
+load("@rosdistro//ament:defs.bzl", "ament_index")
+load("@rosdistro//cc:defs.bzl", "collect_transitive_dynamic_deps", "ros_local_defines")
+load("@rosidl_default_generators//:defs.bzl", "default_generators")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_shared_library", "cc_test")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "package.xml",
+    "test_buffer_plugin.xml",
+])
+
+# rosidl_generate_interfaces(${PROJECT_NAME} msg/*.msg)
+default_generators(
+    package_xml = "package.xml",
+    deps = [
+        "//msg:ByteArray",
+        "//msg:ByteArrayList",
+        "//msg:TestBufferDescriptor",
+    ],
+)
+
+RMW = "rmw_fastrtps_cpp"
+
+DEPENDENCIES = {
+    ":cc_shared": ":cc",
+    "@rclcpp//:rclcpp": "@rclcpp//:rclcpp_library",
+    "@rmw//:rmw": "@rmw//:rmw_library",
+    "@pluginlib//:pluginlib": "@pluginlib//:pluginlib_library",
+    "@rosidl_buffer//:rosidl_buffer": "@rosidl_buffer//:rosidl_buffer_library",
+    "@rosidl_buffer_backend//:rosidl_buffer_backend": "@rosidl_buffer_backend//:rosidl_buffer_backend_library",
+    "@rosidl_runtime_cpp//:rosidl_runtime_cpp": "@rosidl_runtime_cpp//:rosidl_runtime_cpp_library",
+    "@rosidl_typesupport_cpp//:rosidl_typesupport_cpp": "@rosidl_typesupport_cpp//:rosidl_typesupport_cpp_library",
+    "@rosidl_typesupport_fastrtps_cpp//:rosidl_typesupport_fastrtps_cpp": "@rosidl_typesupport_fastrtps_cpp//:rosidl_typesupport_fastrtps_cpp_library",
+    "@std_msgs//:cc_shared": "@std_msgs//:cc",
+}
+
+# add_library(test_rosidl_buffer_impl INTERFACE)
+cc_library(
+    name = "test_rosidl_buffer_impl",
+    hdrs = glob(["include/test_rosidl_buffer/*.hpp", "include/test_rosidl_buffer/*.h"]),
+    includes = ["include"],
+    deps = DEPENDENCIES.values(),
+)
+
+# add_library(test_rosidl_buffer_backend_plugin SHARED src/test_buffer_backend_plugin.cpp)
+cc_library(
+    name = "test_rosidl_buffer_backend_plugin_library",
+    srcs = ["src/test_buffer_backend_plugin.cpp"],
+    local_defines = ros_local_defines() + ["TEST_ROSIDL_BUFFER_BUILDING_DLL"],
+    deps = [":test_rosidl_buffer_impl"],
+    alwayslink = True,
+)
+
+cc_shared_library(
+    name = "test_rosidl_buffer_backend_plugin",
+    dynamic_deps = DEPENDENCIES.keys(),
+    exports_filter = ["//:__subpackages__"],
+    deps = [":test_rosidl_buffer_backend_plugin_library"],
+)
+
+collect_transitive_dynamic_deps(
+    name = "transitive_dynamic_deps",
+    dynamic_deps = DEPENDENCIES.keys() + [":test_rosidl_buffer_backend_plugin"],
+)
+
+# pluginlib_export_plugin_description_file(rosidl_buffer_backend test_buffer_plugin.xml)
+ament_index(
+    name = "plugin_index",
+    export_name = "test_rosidl_buffer",
+    libraries = [":test_rosidl_buffer_backend_plugin"],
+    package_xml = "package.xml",
+    plugin_category = "rosidl_buffer_backend",
+    plugins = ["test_buffer_plugin.xml"],
+    deps = [":ament_index"],
+)
+
+INDEX = [":plugin_index", "@std_msgs//:ament_index"]
+
+[
+    cc_test(
+        name = name,
+        timeout = "short",
+        srcs = ["test/{}.cpp".format(name)],
+        data = INDEX,
+        dynamic_deps = [":transitive_dynamic_deps"],
+        env = {"RMW_IMPLEMENTATION": RMW},
+        local_defines = ros_local_defines(),
+        deps = [":test_rosidl_buffer_impl"] + DEPENDENCIES.values() + ["@rosdistro//cc:googletest"],
+    )
+    for name in [
+        "test_buffer_backend_unit",
+        "test_nested_buffer_deserialize",
+        "test_acceptable_buffer_backends",
+        "test_buffer_serialize",
+        "test_buffer_serialized_take",
+        "test_buffer_publisher_gid",
+    ]
+]
+
+[
+    cc_binary(
+        name = name,
+        srcs = ["src/{}.cpp".format(name)],
+        data = INDEX,
+        dynamic_deps = [":transitive_dynamic_deps"],
+        local_defines = ros_local_defines(),
+        deps = [":test_rosidl_buffer_impl"] + DEPENDENCIES.values(),
+    )
+    for name in [
+        "test_backend_publisher",
+        "test_backend_subscriber",
+        "test_backend_nested_msgs_publisher",
+        "test_backend_nested_msgs_subscriber",
+    ]
+]
+
+[
+    launch_ros_test(
+        name = name + "_py",
+        src = "test/{}.py".format(name),
+        data = INDEX,
+        env = {
+            "RCL_ASSERT_RMW_ID_MATCHES": RMW,
+            "RMW_IMPLEMENTATION": RMW,
+        },
+        timeout = "moderate",
+        deps = [
+            ":test_backend_nested_msgs_publisher",
+            ":test_backend_nested_msgs_subscriber",
+            ":test_backend_publisher",
+            ":test_backend_subscriber",
+            "@rclpy",
+            "@std_msgs//:py",
+        ],
+    )
+    for name in [
+        "test_test_to_test",
+        "test_test_to_cpu",
+        "test_nested_msgs",
+    ]
+]

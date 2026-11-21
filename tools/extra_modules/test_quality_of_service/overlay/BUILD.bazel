@@ -1,0 +1,85 @@
+# Copyright 2026 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@rosdistro//ament:defs.bzl", "ament_index")
+load("@rosdistro//cc:defs.bzl", "collect_transitive_dynamic_deps", "ros_local_defines")
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+package(default_visibility = ["//visibility:public"])
+
+DEPENDENCIES = {
+    "@rcl//:rcl": "@rcl//:rcl_library",
+    "@rclcpp//:rclcpp": "@rclcpp//:rclcpp_library",
+    "@rcutils//:rcutils": "@rcutils//:rcutils_library",
+    "@rmw//:rmw": "@rmw//:rmw_library",
+    "@std_msgs//:cc_shared": "@std_msgs//:cc",
+    "@test_msgs//:cc_shared": "@test_msgs//:cc",
+}
+
+collect_transitive_dynamic_deps(
+    name = "transitive_dynamic_deps",
+    dynamic_deps = DEPENDENCIES.keys(),
+    visibility = ["//visibility:private"],
+)
+
+ament_index(
+    name = "ament_index",
+    package_xml = "package.xml",
+    deps = [
+        "@std_msgs//:ament_index",
+        "@test_msgs//:ament_index",
+    ],
+)
+
+cc_library(
+    name = "test_quality_of_service_support",
+    srcs = [
+        "test/qos_test_node.cpp",
+        "test/qos_test_publisher.cpp",
+        "test/qos_test_subscriber.cpp",
+    ],
+    hdrs = glob(["include/test_quality_of_service/*.hpp"]),
+    includes = ["include"],
+    local_defines = ros_local_defines() + ["TEST_QUALITY_OF_SERVICE_BUILDING_LIBRARY"],
+    deps = DEPENDENCIES.values(),
+)
+
+# call_for_each_rmw_implementation(): the build has a single static RMW (--@rosdistro//:rmw,
+# default rmw_fastrtps_cpp), so there is one instance. Multi-RMW expansion is tracked in #85.
+RMW = "rmw_fastrtps_cpp"
+
+[
+    cc_test(
+        name = name,
+        timeout = "moderate",
+        srcs = [
+            "test/{}.cpp".format(name),
+            "test/qos_utilities.cpp",
+        ],
+        data = [":ament_index"],
+        dynamic_deps = [":transitive_dynamic_deps"],
+        env = {"RMW_IMPLEMENTATION": RMW},
+        local_defines = ros_local_defines() + ["RMW_IMPLEMENTATION=" + RMW],
+        deps = DEPENDENCIES.values() + [
+            ":test_quality_of_service_support",
+            "@rosdistro//cc:googletest",
+        ],
+    )
+    for name in [
+        "test_deadline",
+        "test_lifespan",
+        "test_liveliness",
+        "test_best_available",
+    ]
+]

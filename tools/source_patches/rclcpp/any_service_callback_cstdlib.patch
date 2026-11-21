@@ -1,0 +1,10 @@
+--- a/include/rclcpp/any_service_callback.hpp
++++ b/include/rclcpp/any_service_callback.hpp
+@@ -16,6 +16,7 @@
+ #define RCLCPP__ANY_SERVICE_CALLBACK_HPP_
+ 
+ #include <variant>
++#include <cstdlib>
+ #include <functional>
+ #include <memory>
+ #include <stdexcept>

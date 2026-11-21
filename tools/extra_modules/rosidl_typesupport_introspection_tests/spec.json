@@ -1,0 +1,2 @@
+{"repo": "ros2/rosidl", "ref": "rolling", "subdir": "rosidl_typesupport_introspection_tests",
+ "template": "test_msgs"}

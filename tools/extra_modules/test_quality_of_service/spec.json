@@ -1,0 +1,2 @@
+{"repo": "ros2/system_tests", "ref": "rolling", "subdir": "test_quality_of_service",
+ "template": "rclcpp_components"}

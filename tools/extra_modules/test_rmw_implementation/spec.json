@@ -1,0 +1,2 @@
+{"repo": "ros2/rmw_implementation", "ref": "rolling", "subdir": "test_rmw_implementation",
+ "template": "rmw_implementation"}

@@ -1,0 +1,2 @@
+{"repo": "ros2/launch_ros", "ref": "rolling", "subdir": "test_launch_ros",
+ "template": "launch_ros"}

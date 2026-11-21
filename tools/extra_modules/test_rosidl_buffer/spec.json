@@ -1,0 +1,2 @@
+{"repo": "ros2/system_tests", "ref": "rolling", "subdir": "test_rosidl_buffer",
+ "template": "rosidl_buffer_backend"}

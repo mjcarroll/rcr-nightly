@@ -1,0 +1,38 @@
+# Copyright 2026 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@rosdistro//python:defs.bzl", "py_pytest")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["package.xml"])
+
+# ament_add_pytest_test over test/ (linters/mypy skipped)
+[
+    py_pytest(
+        name = src.removeprefix("test/test_tracetools_launch/").removesuffix(".py"),
+        timeout = "moderate",
+        srcs = [src],
+        deps = [
+            "@launch//:launch",
+            "@launch_ros//:launch_ros",
+            "@launch_testing_ros//:launch_testing_ros",
+            "@launch_xml//:launch_xml",
+            "@launch_yaml//:launch_yaml",
+            "@tracetools_launch//:tracetools_launch",
+            "@tracetools_trace//:tracetools_trace",
+        ],
+    )
+    for src in glob(["test/test_tracetools_launch/test_*.py"])
+]

@@ -1,0 +1,82 @@
+# Copyright 2026 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@rosdistro//cc:defs.bzl", "collect_transitive_dynamic_deps", "ros_local_defines")
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
+package(default_visibility = ["//visibility:public"])
+
+RMW = "rmw_zenoh_cpp"
+
+DEPENDENCIES = {
+    "@rcl//:rcl": "@rcl//:rcl_library",
+    "@rclcpp//:rclcpp": "@rclcpp//:rclcpp_library",
+    "@rcpputils//:rcpputils": "@rcpputils//:rcpputils_library",
+    "@rmw//:rmw": "@rmw//:rmw_library",
+    "@rmw_zenoh_cpp//:rmw_zenoh_cpp": "@rmw_zenoh_cpp//:rmw_zenoh_cpp_library",
+    "@rosdistro//cc:zenoh-cpp": "@rosdistro//cc:zenoh-cpp_library",
+    "@rosidl_typesupport_fastrtps_cpp//:rosidl_typesupport_fastrtps_cpp": "@rosidl_typesupport_fastrtps_cpp//:rosidl_typesupport_fastrtps_cpp_library",
+    "@std_msgs//:cc_shared": "@std_msgs//:cc",
+    "@test_msgs//:cc_shared": "@test_msgs//:cc",
+}
+
+collect_transitive_dynamic_deps(
+    name = "transitive_dynamic_deps",
+    dynamic_deps = DEPENDENCIES.keys(),
+    visibility = ["//visibility:private"],
+)
+
+# ament_add_ros_isolated_gtest(<name> test/<name>.cpp ENV RMW_IMPLEMENTATION=rmw_zenoh_cpp)
+#
+# KNOWN GAP: everything that opens a Zenoh session is `manual`: rmw_zenoh master's built-in default
+# config has fields (e.g. `region_name`) that need zenoh-c >= 1.10.1 (zenoh_cpp_vendor pins
+# 07b0d432, "1.10.1 plus few fixes"), but the registry ships zenoh-c 1.8.0, so session creation
+# fails with "Invalid built-in default configuration" (std::bad_alloc in the tests). Needs the
+# registry's zenoh-c/zenoh-cpp bumped; released rmw_zenoh_cpp 0.10.6 matches 1.8.0.
+[
+    cc_test(
+        name = name,
+        timeout = timeout,
+        srcs = ["test_rmw_zenoh_cpp/test/{}.cpp".format(name)] + extra_srcs,
+        data = [
+            "@rmw_zenoh_cpp//:ament_index",
+            "@test_msgs//:ament_index",
+        ],
+        dynamic_deps = [":transitive_dynamic_deps"],
+        env = {"RMW_IMPLEMENTATION": RMW},
+        includes = ["rmw_zenoh_cpp/src"],
+        tags = [] if name == "test_deserialize_out_of_bounds" else ["manual"],
+        local_defines = ros_local_defines(),
+        deps = DEPENDENCIES.values() + ["@rosdistro//cc:googletest"],
+    )
+    for name, timeout, extra_srcs in [
+        ("test_rmw_zenoh_session", "moderate", []),
+        ("test_client_destroy_during_reply", "long", []),
+        ("test_service_destroy_during_request", "long", []),
+        ("test_subscription_destroy_during_sample", "long", []),
+        ("test_publish_during_shutdown", "long", []),
+        ("test_deserialize_out_of_bounds", "moderate", []),
+        # also compiles a few of the RMW's own sources (reaching into its private src/)
+        ("test_rmw_zenoh_sequence_number", "moderate", [
+            "rmw_zenoh_cpp/src/detail/liveliness_utils.cpp",
+            "rmw_zenoh_cpp/src/detail/liveliness_utils.hpp",
+            "rmw_zenoh_cpp/src/detail/logging.cpp",
+            "rmw_zenoh_cpp/src/detail/logging.hpp",
+            "rmw_zenoh_cpp/src/detail/qos.cpp",
+            "rmw_zenoh_cpp/src/detail/qos.hpp",
+            "rmw_zenoh_cpp/src/detail/simplified_xxhash3.cpp",
+            "rmw_zenoh_cpp/src/detail/simplified_xxhash3.hpp",
+        ]),
+    ]
+]

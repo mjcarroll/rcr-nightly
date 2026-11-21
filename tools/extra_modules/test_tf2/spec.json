@@ -1,0 +1,2 @@
+{"repo": "ros2/geometry2", "ref": "rolling", "subdir": "test_tf2",
+ "template": "tf2_ros"}

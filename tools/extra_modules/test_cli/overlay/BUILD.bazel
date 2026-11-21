@@ -1,0 +1,90 @@
+# Copyright 2026 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@launch_testing_ros//:defs.bzl", "launch_ros_test")
+load("@rosdistro//ament:defs.bzl", "ament_index")
+load("@rosdistro//cc:defs.bzl", "collect_transitive_dynamic_deps", "ros_local_defines")
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_python//python:defs.bzl", "py_library")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["package.xml"])
+
+DEPENDENCIES = {
+    "@rclcpp//:rclcpp": "@rclcpp//:rclcpp_library",
+    "@test_msgs//:cc_shared": "@test_msgs//:cc",
+}
+
+collect_transitive_dynamic_deps(
+    name = "transitive_dynamic_deps",
+    dynamic_deps = DEPENDENCIES.keys(),
+    visibility = ["//visibility:private"],
+)
+
+ament_index(
+    name = "ament_index",
+    package_xml = "package.xml",
+    deps = [
+        "@rcl_interfaces//:ament_index",
+        "@test_msgs//:ament_index",
+    ],
+)
+
+[
+    cc_binary(
+        name = name,
+        srcs = [src],
+        data = [":ament_index"],
+        dynamic_deps = [":transitive_dynamic_deps"],
+        local_defines = ros_local_defines(),
+        deps = DEPENDENCIES.values(),
+    )
+    for name, src in [
+        ("initial_params_rclcpp", "test/initial_params.cpp"),
+        ("name_maker_rclcpp", "test/name_maker.cpp"),
+    ]
+]
+
+# Helper nodes written in Python, started by path from the tests.
+py_library(
+    name = "name_maker_py",
+    srcs = ["test/name_maker.py"],
+    deps = [
+        "@rclpy//:rclpy",
+        "@test_msgs//:py",
+    ],
+)
+
+# add_launch_test(test/test_cli_remapping.py ...): the tests read the helper executables'
+# paths from NAME_MAKER_RCLCPP / NAME_MAKER_RCLPY. Both are given relative to the test's
+# working directory (<runfiles>/_main), the CMake equivalents of $<TARGET_FILE:...>.
+launch_ros_test(
+    name = "test_cli_remapping",
+    timeout = "long",
+    src = "test/test_cli_remapping.py",
+    data = [
+        ":ament_index",
+        ":name_maker_rclcpp",
+        "test/name_maker.py",
+    ],
+    env = {
+        "NAME_MAKER_RCLCPP": "../$(rlocationpath :name_maker_rclcpp)",
+        "NAME_MAKER_RCLPY": "../$(rlocationpath test/name_maker.py)",
+    },
+    deps = [":name_maker_py"],
+)
+
+# test_params_yaml is SKIP_TEST upstream (https://github.com/ros2/system_tests/issues/365):
+# the initial_params_rclcpp helper is still built so it keeps compiling.

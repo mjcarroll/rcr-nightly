@@ -1,0 +1,2 @@
+{"repo": "ros2/ros2cli", "ref": "rolling", "subdir": "ros2log",
+ "template": "ros2node"}

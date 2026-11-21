@@ -1,0 +1,2 @@
+{"repo": "ros2/ros2_tracing", "ref": "rolling", "subdir": "test_tracetools",
+ "template": "tracetools_test"}

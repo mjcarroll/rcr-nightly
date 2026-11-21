@@ -1,0 +1,72 @@
+# Copyright 2026 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@pip_ros//:requirements.bzl", "requirement")
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_python//python:defs.bzl", "py_test")
+
+package(default_visibility = ["//visibility:public"])
+
+# helper programs the tests launch (found relative to the working directory)
+cc_binary(
+    name = "locking",
+    srcs = ["test/dummy_tests/locking.cpp"],
+    deps = ["@rosdistro//cc:googletest"],
+)
+
+cc_binary(
+    name = "dummy",
+    srcs = ["test/dummy_tests/dummy.cpp"],
+    deps = ["@rosdistro//cc:googletest"],
+)
+
+PYTHON_DEPS = [
+    "@launch//:launch",
+    "@launch_testing//:launch_testing",
+    requirement("pytest"),
+]
+
+# ament_add_pytest_test(test_pytest_py ... WORKING_DIRECTORY test/dummy_tests)
+py_test(
+    name = "test_pytest_py",
+    srcs = ["chdir_pytest_main.py"],
+    args = [
+        "test/dummy_tests",
+        "$(location test/test_launch_testing/actions/test_pytest.py)",
+    ],
+    data = [
+        "test/dummy_tests/dummy.py",
+        "test/dummy_tests/locking.py",
+        "test/test_launch_testing/actions/test_pytest.py",
+    ],
+    main = "chdir_pytest_main.py",
+    deps = PYTHON_DEPS,
+)
+
+# ament_add_pytest_test(test_gtest_py ... WORKING_DIRECTORY <build dir with locking & dummy>)
+py_test(
+    name = "test_gtest_py",
+    srcs = ["chdir_pytest_main.py"],
+    args = [
+        ".",
+        "$(location test/test_launch_testing/actions/test_gtest.py)",
+    ],
+    data = [
+        ":dummy",
+        ":locking",
+        "test/test_launch_testing/actions/test_gtest.py",
+    ],
+    main = "chdir_pytest_main.py",
+    deps = PYTHON_DEPS,
+)

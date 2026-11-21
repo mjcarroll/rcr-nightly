@@ -1,0 +1,2 @@
+{"repo": "ros2/rmw_zenoh", "ref": "rolling", "subdir": "",
+ "template": "rmw_zenoh_cpp"}

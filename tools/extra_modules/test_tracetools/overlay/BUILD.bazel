@@ -1,0 +1,146 @@
+# Copyright 2026 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@rosdistro//ament:defs.bzl", "ament_index")
+load("@rosdistro//cc:defs.bzl", "collect_transitive_dynamic_deps", "ros_local_defines")
+load("@rosdistro//python:defs.bzl", "py_pytest")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("//:libexec.bzl", "libexec_layout")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["package.xml"])
+
+# Everything here needs the tracepoints: build with --@rosdistro//:tracing_enabled_linux
+# (otherwise the targets are skipped as incompatible).
+TRACING = select({
+    "@rosdistro//:tracing_enabled_linux": [],
+    "//conditions:default": ["@platforms//:incompatible"],
+})
+
+# tracetools::get_symbol() resolves callback symbols with dladdr(), which only sees the dynamic
+# symbol table.
+EXPORT_SYMBOLS = ["-Wl,--export-dynamic"]
+
+DEPENDENCIES = {
+    "@lifecycle_msgs//:cc_shared": "@lifecycle_msgs//:cc",
+    "@rclcpp//:rclcpp": "@rclcpp//:rclcpp_library",
+    "@rclcpp_lifecycle//:rclcpp_lifecycle": "@rclcpp_lifecycle//:rclcpp_lifecycle_library",
+    "@rcpputils//:rcpputils": "@rcpputils//:rcpputils_library",
+    "@rmw//:rmw": "@rmw//:rmw_library",
+    "@rosdistro//cc:lttng_ust_shared": "@rosdistro//cc:lttng_ust",
+    "@std_msgs//:cc_shared": "@std_msgs//:cc",
+    "@std_srvs//:cc_shared": "@std_srvs//:cc",
+    "@tracetools//:tracetools": "@tracetools//:tracetools_library",
+}
+
+collect_transitive_dynamic_deps(
+    name = "transitive_dynamic_deps",
+    dynamic_deps = DEPENDENCIES.keys(),
+    visibility = ["//visibility:private"],
+)
+
+# add_library(test_tracetools_mark_process STATIC src/mark_process.cpp)
+cc_library(
+    name = "test_tracetools_mark_process",
+    srcs = ["src/mark_process.cpp"],
+    hdrs = ["include/test_tracetools/mark_process.hpp"],
+    includes = ["include"],
+    local_defines = ros_local_defines(),
+    target_compatible_with = TRACING,
+    deps = DEPENDENCIES.values(),
+)
+
+EXECUTABLES = [
+    "test_intra",
+    "test_lifecycle_node",
+    "test_lifecycle_client",
+    "test_message_link_partial_sync",
+    "test_message_link_periodic_async",
+    "test_ping",
+    "test_pong",
+    "test_generic_ping",
+    "test_generic_pong",
+    "test_publisher",
+    "test_service_ping",
+    "test_service_pong",
+    "test_timer",
+]
+
+[
+    cc_binary(
+        name = name,
+        srcs = ["src/{}.cpp".format(name)],
+        dynamic_deps = [":transitive_dynamic_deps"],
+        linkopts = EXPORT_SYMBOLS,
+        local_defines = ros_local_defines(),
+        target_compatible_with = TRACING,
+        deps = [":test_tracetools_mark_process"] + DEPENDENCIES.values(),
+    )
+    for name in EXECUTABLES
+]
+
+# install(TARGETS ... DESTINATION lib/test_tracetools)
+libexec_layout(
+    name = "libexec",
+    executables = {":" + name: "test_tracetools" for name in EXECUTABLES},
+    target_compatible_with = TRACING,
+)
+
+ament_index(
+    name = "ament_index",
+    package_xml = "package.xml",
+    deps = [
+        "@launch_ros//:ament_package",
+        "@tracetools//:ament_package",
+    ],
+)
+
+# KNOWN GAP: 4 of 5 cases compare demangled symbols against libstdc++ spellings
+# ("function_shared(std::shared_ptr<int>)"), but the toolchain is libc++, which spells them
+# "std::__1::shared_ptr<int>". Kept out of //... until the test is made stdlib-agnostic.
+cc_test(
+    name = "test_utils",
+    tags = ["manual"],
+    srcs = ["test/test_utils.cpp"],
+    dynamic_deps = [":transitive_dynamic_deps"],
+    linkopts = EXPORT_SYMBOLS,
+    local_defines = ros_local_defines(),
+    target_compatible_with = TRACING,
+    deps = DEPENDENCIES.values() + ["@rosdistro//cc:googletest"],
+)
+
+# ament_add_ros_isolated_pytest_test (and the per-RMW variants, which here is the build's one RMW)
+[
+    py_pytest(
+        name = src.removeprefix("test/").removesuffix(".py") + "_py",
+        timeout = "moderate",
+        srcs = [src],
+        data = [
+            "conftest.py",
+            ":ament_index",
+            ":libexec",
+        ],
+        # conftest.py gives every run its own short LTTNG_HOME and session daemon.
+        target_compatible_with = TRACING,
+        deps = [
+            "@launch//:launch",
+            "@launch_ros//:launch_ros",
+            "@rclpy//:rclpy",
+            "@tracetools_test//:tracetools_test",
+            "@tracetools_trace//:tracetools_trace",
+        ],
+    )
+    for src in glob(["test/test_*.py"])
+]

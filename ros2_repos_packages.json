@@ -1,0 +1,2470 @@
+{
+ "ament/ament_cmake": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "ament_cmake",
+    "path": "ament_cmake",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_auto",
+    "path": "ament_cmake_auto",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_core",
+    "path": "ament_cmake_core",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_export_definitions",
+    "path": "ament_cmake_export_definitions",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_export_dependencies",
+    "path": "ament_cmake_export_dependencies",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_export_include_directories",
+    "path": "ament_cmake_export_include_directories",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_export_libraries",
+    "path": "ament_cmake_export_libraries",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_export_link_flags",
+    "path": "ament_cmake_export_link_flags",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_export_targets",
+    "path": "ament_cmake_export_targets",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_gen_version_h",
+    "path": "ament_cmake_gen_version_h",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_gmock",
+    "path": "ament_cmake_gmock",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_google_benchmark",
+    "path": "ament_cmake_google_benchmark",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_gtest",
+    "path": "ament_cmake_gtest",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_include_directories",
+    "path": "ament_cmake_include_directories",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_libraries",
+    "path": "ament_cmake_libraries",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_pytest",
+    "path": "ament_cmake_pytest",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_python",
+    "path": "ament_cmake_python",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_python_test",
+    "path": "ament_cmake_python_test",
+    "in_rcr": false
+   },
+   {
+    "name": "ament_cmake_target_dependencies",
+    "path": "ament_cmake_target_dependencies",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_test",
+    "path": "ament_cmake_test",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_vendor_package",
+    "path": "ament_cmake_vendor_package",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_version",
+    "path": "ament_cmake_version",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ament/ament_index": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "ament_index_cpp",
+    "path": "ament_index_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_index_python",
+    "path": "ament_index_python",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ament/ament_lint": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "ament_clang_format",
+    "path": "ament_clang_format",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_clang_tidy",
+    "path": "ament_clang_tidy",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_clang_format",
+    "path": "ament_cmake_clang_format",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_clang_tidy",
+    "path": "ament_cmake_clang_tidy",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_copyright",
+    "path": "ament_cmake_copyright",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_cppcheck",
+    "path": "ament_cmake_cppcheck",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_cpplint",
+    "path": "ament_cmake_cpplint",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_flake8",
+    "path": "ament_cmake_flake8",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_lint_cmake",
+    "path": "ament_cmake_lint_cmake",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_mypy",
+    "path": "ament_cmake_mypy",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_pclint",
+    "path": "ament_cmake_pclint",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_pep257",
+    "path": "ament_cmake_pep257",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_pycodestyle",
+    "path": "ament_cmake_pycodestyle",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_pyflakes",
+    "path": "ament_cmake_pyflakes",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_uncrustify",
+    "path": "ament_cmake_uncrustify",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_xmllint",
+    "path": "ament_cmake_xmllint",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_copyright",
+    "path": "ament_copyright",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cppcheck",
+    "path": "ament_cppcheck",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cpplint",
+    "path": "ament_cpplint",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_flake8",
+    "path": "ament_flake8",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_lint",
+    "path": "ament_lint",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_lint_auto",
+    "path": "ament_lint_auto",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_lint_cmake",
+    "path": "ament_lint_cmake",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_lint_common",
+    "path": "ament_lint_common",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_mypy",
+    "path": "ament_mypy",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_pclint",
+    "path": "ament_pclint",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_pep257",
+    "path": "ament_pep257",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_pycodestyle",
+    "path": "ament_pycodestyle",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_pyflakes",
+    "path": "ament_pyflakes",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_uncrustify",
+    "path": "ament_uncrustify",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_xmllint",
+    "path": "ament_xmllint",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ament/ament_package": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "ament_package",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ament/google_benchmark_vendor": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "google_benchmark_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ament/googletest": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "gmock_vendor",
+    "path": "googlemock",
+    "in_rcr": true
+   },
+   {
+    "name": "gtest_vendor",
+    "path": "googletest",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ament/uncrustify_vendor": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "uncrustify_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "eProsima/Fast-CDR": {
+  "ref": "2.3.x",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "fastcdr",
+    "path": "",
+    "in_rcr": false
+   }
+  ]
+ },
+ "eProsima/Fast-DDS": {
+  "ref": "3.6.x",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "fastdds",
+    "path": "",
+    "in_rcr": false
+   }
+  ]
+ },
+ "eProsima/foonathan_memory_vendor": {
+  "ref": "master",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "foonathan_memory_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "eclipse-cyclonedds/cyclonedds": {
+  "ref": "releases/11.0.x",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "cyclonedds",
+    "path": "",
+    "in_rcr": false
+   }
+  ]
+ },
+ "eclipse-iceoryx/iceoryx": {
+  "ref": "release_2.0",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "iceoryx_binding_c",
+    "path": "iceoryx_binding_c",
+    "in_rcr": true
+   },
+   {
+    "name": "iceoryx_hoofs",
+    "path": "iceoryx_hoofs",
+    "in_rcr": true
+   },
+   {
+    "name": "iceoryx_integrationtest",
+    "path": "iceoryx_integrationtest",
+    "in_rcr": false
+   },
+   {
+    "name": "iceoryx_posh",
+    "path": "iceoryx_posh",
+    "in_rcr": true
+   },
+   {
+    "name": "iceoryx_introspection",
+    "path": "tools/introspection",
+    "in_rcr": true
+   }
+  ]
+ },
+ "gazebo-release/gz_cmake_vendor": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "gz_cmake_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "gazebo-release/gz_math_vendor": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "gz_math_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "gazebo-release/gz_utils_vendor": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "gz_utils_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "osrf/osrf_testing_tools_cpp": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "osrf_testing_tools_cpp",
+    "path": "osrf_testing_tools_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "test_osrf_testing_tools_cpp",
+    "path": "test_osrf_testing_tools_cpp",
+    "in_rcr": false
+   }
+  ]
+ },
+ "ros-perception/image_common": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "camera_calibration_parsers",
+    "path": "camera_calibration_parsers",
+    "in_rcr": true
+   },
+   {
+    "name": "camera_info_manager",
+    "path": "camera_info_manager",
+    "in_rcr": true
+   },
+   {
+    "name": "camera_info_manager_py",
+    "path": "camera_info_manager_py",
+    "in_rcr": true
+   },
+   {
+    "name": "image_common",
+    "path": "image_common",
+    "in_rcr": true
+   },
+   {
+    "name": "image_transport",
+    "path": "image_transport",
+    "in_rcr": true
+   },
+   {
+    "name": "image_transport_py",
+    "path": "image_transport_py",
+    "in_rcr": true
+   },
+   {
+    "name": "polled_camera",
+    "path": "polled_camera",
+    "in_rcr": false
+   }
+  ]
+ },
+ "ros-perception/laser_geometry": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "laser_geometry",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-perception/point_cloud_transport": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "point_cloud_transport",
+    "path": "point_cloud_transport",
+    "in_rcr": true
+   },
+   {
+    "name": "point_cloud_transport_py",
+    "path": "point_cloud_transport_py",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-planning/navigation_msgs": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "map_msgs",
+    "path": "map_msgs",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-tooling/keyboard_handler": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "keyboard_handler",
+    "path": "keyboard_handler",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/interactive_markers": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "interactive_markers",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/python_qt_binding": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "python_qt_binding",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/qt_gui_core": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "qt_dotgraph",
+    "path": "qt_dotgraph",
+    "in_rcr": true
+   },
+   {
+    "name": "qt_gui",
+    "path": "qt_gui",
+    "in_rcr": true
+   },
+   {
+    "name": "qt_gui_app",
+    "path": "qt_gui_app",
+    "in_rcr": true
+   },
+   {
+    "name": "qt_gui_core",
+    "path": "qt_gui_core",
+    "in_rcr": true
+   },
+   {
+    "name": "qt_gui_cpp",
+    "path": "qt_gui_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "qt_gui_py_common",
+    "path": "qt_gui_py_common",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt",
+    "path": "rqt",
+    "in_rcr": true
+   },
+   {
+    "name": "rqt_gui",
+    "path": "rqt_gui",
+    "in_rcr": true
+   },
+   {
+    "name": "rqt_gui_cpp",
+    "path": "rqt_gui_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "rqt_gui_py",
+    "path": "rqt_gui_py",
+    "in_rcr": true
+   },
+   {
+    "name": "rqt_py_common",
+    "path": "rqt_py_common",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_action": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_action",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_bag": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_bag",
+    "path": "rqt_bag",
+    "in_rcr": true
+   },
+   {
+    "name": "rqt_bag_plugins",
+    "path": "rqt_bag_plugins",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_console": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_console",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_graph": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_graph",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_msg": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_msg",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_plot": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_plot",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_publisher": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_publisher",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_py_console": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_py_console",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_reconfigure": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_reconfigure",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_service_caller": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_service_caller",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_shell": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_shell",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_srv": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_srv",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/rqt_topic": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rqt_topic",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros-visualization/tango_icons_vendor": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "tango_icons_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros/class_loader": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "class_loader",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros/kdl_parser": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "kdl_parser",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros/pluginlib": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "pluginlib",
+    "path": "pluginlib",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2plugin",
+    "path": "ros2plugin",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros/resource_retriever": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "resource_retriever",
+    "path": "resource_retriever",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros/robot_state_publisher": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "robot_state_publisher",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros/ros_environment": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "ros_environment",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros/ros_tutorials": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "turtlesim",
+    "path": "turtlesim",
+    "in_rcr": true
+   },
+   {
+    "name": "turtlesim_msgs",
+    "path": "turtlesim_msgs",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros/urdfdom": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "urdfdom",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros/urdfdom_headers": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "urdfdom_headers",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2-rust/rosidl_rust": {
+  "ref": "main",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_generator_rs",
+    "path": "rosidl_generator_rs",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/ament_cmake_ros": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "ament_cmake_ros",
+    "path": "ament_cmake_ros",
+    "in_rcr": true
+   },
+   {
+    "name": "ament_cmake_ros_core",
+    "path": "ament_cmake_ros_core",
+    "in_rcr": true
+   },
+   {
+    "name": "domain_coordinator",
+    "path": "domain_coordinator",
+    "in_rcr": true
+   },
+   {
+    "name": "rmw_test_fixture",
+    "path": "rmw_test_fixture",
+    "in_rcr": true
+   },
+   {
+    "name": "rmw_test_fixture_implementation",
+    "path": "rmw_test_fixture_implementation",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/common_interfaces": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "common_interfaces",
+    "path": "common_interfaces",
+    "in_rcr": true
+   },
+   {
+    "name": "diagnostic_msgs",
+    "path": "diagnostic_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "geometry_msgs",
+    "path": "geometry_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "nav_msgs",
+    "path": "nav_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "sensor_msgs",
+    "path": "sensor_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "sensor_msgs_py",
+    "path": "sensor_msgs_py",
+    "in_rcr": true
+   },
+   {
+    "name": "shape_msgs",
+    "path": "shape_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "std_msgs",
+    "path": "std_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "std_srvs",
+    "path": "std_srvs",
+    "in_rcr": true
+   },
+   {
+    "name": "stereo_msgs",
+    "path": "stereo_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "trajectory_msgs",
+    "path": "trajectory_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "visualization_msgs",
+    "path": "visualization_msgs",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/console_bridge_vendor": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "console_bridge_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/demos": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "action_tutorials_cpp",
+    "path": "action_tutorials/action_tutorials_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "action_tutorials_py",
+    "path": "action_tutorials/action_tutorials_py",
+    "in_rcr": true
+   },
+   {
+    "name": "composition",
+    "path": "composition",
+    "in_rcr": true
+   },
+   {
+    "name": "demo_nodes_cpp",
+    "path": "demo_nodes_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "demo_nodes_cpp_native",
+    "path": "demo_nodes_cpp_native",
+    "in_rcr": true
+   },
+   {
+    "name": "demo_nodes_py",
+    "path": "demo_nodes_py",
+    "in_rcr": true
+   },
+   {
+    "name": "dummy_map_server",
+    "path": "dummy_robot/dummy_map_server",
+    "in_rcr": true
+   },
+   {
+    "name": "dummy_robot_bringup",
+    "path": "dummy_robot/dummy_robot_bringup",
+    "in_rcr": true
+   },
+   {
+    "name": "dummy_sensors",
+    "path": "dummy_robot/dummy_sensors",
+    "in_rcr": true
+   },
+   {
+    "name": "image_tools",
+    "path": "image_tools",
+    "in_rcr": true
+   },
+   {
+    "name": "intra_process_demo",
+    "path": "intra_process_demo",
+    "in_rcr": true
+   },
+   {
+    "name": "lifecycle",
+    "path": "lifecycle",
+    "in_rcr": true
+   },
+   {
+    "name": "lifecycle_py",
+    "path": "lifecycle_py",
+    "in_rcr": true
+   },
+   {
+    "name": "logging_demo",
+    "path": "logging_demo",
+    "in_rcr": true
+   },
+   {
+    "name": "pendulum_control",
+    "path": "pendulum_control",
+    "in_rcr": true
+   },
+   {
+    "name": "pendulum_msgs",
+    "path": "pendulum_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "quality_of_service_demo_cpp",
+    "path": "quality_of_service_demo/rclcpp",
+    "in_rcr": true
+   },
+   {
+    "name": "quality_of_service_demo_py",
+    "path": "quality_of_service_demo/rclpy",
+    "in_rcr": true
+   },
+   {
+    "name": "topic_monitor",
+    "path": "topic_monitor",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/eigen3_cmake_module": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "eigen3_cmake_module",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/example_interfaces": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "example_interfaces",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/examples": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "launch_testing_examples",
+    "path": "launch_testing/launch_testing_examples",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_minimal_action_client",
+    "path": "rclcpp/actions/minimal_action_client",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_minimal_action_server",
+    "path": "rclcpp/actions/minimal_action_server",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_minimal_composition",
+    "path": "rclcpp/composition/minimal_composition",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_cbg_executor",
+    "path": "rclcpp/executors/cbg_executor",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_multithreaded_executor",
+    "path": "rclcpp/executors/multithreaded_executor",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_async_client",
+    "path": "rclcpp/services/async_client",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_deferred_service",
+    "path": "rclcpp/services/deferred_response",
+    "in_rcr": false
+   },
+   {
+    "name": "examples_rclcpp_minimal_client",
+    "path": "rclcpp/services/minimal_client",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_minimal_service",
+    "path": "rclcpp/services/minimal_service",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_minimal_timer",
+    "path": "rclcpp/timers/minimal_timer",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_minimal_publisher",
+    "path": "rclcpp/topics/minimal_publisher",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_minimal_subscriber",
+    "path": "rclcpp/topics/minimal_subscriber",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclcpp_wait_set",
+    "path": "rclcpp/wait_set",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclpy_minimal_action_client",
+    "path": "rclpy/actions/minimal_action_client",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclpy_minimal_action_server",
+    "path": "rclpy/actions/minimal_action_server",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclpy_executors",
+    "path": "rclpy/executors",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclpy_guard_conditions",
+    "path": "rclpy/guard_conditions",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclpy_minimal_client",
+    "path": "rclpy/services/minimal_client",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclpy_minimal_service",
+    "path": "rclpy/services/minimal_service",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclpy_minimal_publisher",
+    "path": "rclpy/topics/minimal_publisher",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclpy_minimal_subscriber",
+    "path": "rclpy/topics/minimal_subscriber",
+    "in_rcr": true
+   },
+   {
+    "name": "examples_rclpy_pointcloud_publisher",
+    "path": "rclpy/topics/pointcloud_publisher",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/geometry2": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "examples_tf2_py",
+    "path": "examples_tf2_py",
+    "in_rcr": true
+   },
+   {
+    "name": "geometry2",
+    "path": "geometry2",
+    "in_rcr": true
+   },
+   {
+    "name": "test_tf2",
+    "path": "test_tf2",
+    "in_rcr": false
+   },
+   {
+    "name": "tf2",
+    "path": "tf2",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_bullet",
+    "path": "tf2_bullet",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_eigen",
+    "path": "tf2_eigen",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_eigen_kdl",
+    "path": "tf2_eigen_kdl",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_geometry_msgs",
+    "path": "tf2_geometry_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_kdl",
+    "path": "tf2_kdl",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_msgs",
+    "path": "tf2_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_py",
+    "path": "tf2_py",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_ros",
+    "path": "tf2_ros",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_ros_py",
+    "path": "tf2_ros_py",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_sensor_msgs",
+    "path": "tf2_sensor_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "tf2_tools",
+    "path": "tf2_tools",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/launch": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "launch",
+    "path": "launch",
+    "in_rcr": true
+   },
+   {
+    "name": "launch_pytest",
+    "path": "launch_pytest",
+    "in_rcr": true
+   },
+   {
+    "name": "launch_testing",
+    "path": "launch_testing",
+    "in_rcr": true
+   },
+   {
+    "name": "launch_testing_ament_cmake",
+    "path": "launch_testing_ament_cmake",
+    "in_rcr": true
+   },
+   {
+    "name": "launch_xml",
+    "path": "launch_xml",
+    "in_rcr": true
+   },
+   {
+    "name": "launch_yaml",
+    "path": "launch_yaml",
+    "in_rcr": true
+   },
+   {
+    "name": "test_launch_testing",
+    "path": "test_launch_testing",
+    "in_rcr": false
+   }
+  ]
+ },
+ "ros2/launch_ros": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "launch_ros",
+    "path": "launch_ros",
+    "in_rcr": true
+   },
+   {
+    "name": "launch_testing_ros",
+    "path": "launch_testing_ros",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2launch",
+    "path": "ros2launch",
+    "in_rcr": true
+   },
+   {
+    "name": "test_launch_ros",
+    "path": "test_launch_ros",
+    "in_rcr": false
+   }
+  ]
+ },
+ "ros2/libyaml_vendor": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "libyaml_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/message_filters": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "message_filters",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/mimick_vendor": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "mimick_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/performance_test_fixture": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "performance_test_fixture",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rcl": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rcl",
+    "path": "rcl",
+    "in_rcr": true
+   },
+   {
+    "name": "rcl_action",
+    "path": "rcl_action",
+    "in_rcr": true
+   },
+   {
+    "name": "rcl_lifecycle",
+    "path": "rcl_lifecycle",
+    "in_rcr": true
+   },
+   {
+    "name": "rcl_yaml_param_parser",
+    "path": "rcl_yaml_param_parser",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rcl_interfaces": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "action_msgs",
+    "path": "action_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "builtin_interfaces",
+    "path": "builtin_interfaces",
+    "in_rcr": true
+   },
+   {
+    "name": "composition_interfaces",
+    "path": "composition_interfaces",
+    "in_rcr": true
+   },
+   {
+    "name": "lifecycle_msgs",
+    "path": "lifecycle_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "rcl_interfaces",
+    "path": "rcl_interfaces",
+    "in_rcr": true
+   },
+   {
+    "name": "rosgraph_msgs",
+    "path": "rosgraph_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "service_msgs",
+    "path": "service_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "statistics_msgs",
+    "path": "statistics_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "test_msgs",
+    "path": "test_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "type_description_interfaces",
+    "path": "type_description_interfaces",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rcl_logging": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rcl_logging_implementation",
+    "path": "rcl_logging_implementation",
+    "in_rcr": true
+   },
+   {
+    "name": "rcl_logging_interface",
+    "path": "rcl_logging_interface",
+    "in_rcr": true
+   },
+   {
+    "name": "rcl_logging_noop",
+    "path": "rcl_logging_noop",
+    "in_rcr": true
+   },
+   {
+    "name": "rcl_logging_spdlog",
+    "path": "rcl_logging_spdlog",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rclcpp": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rclcpp",
+    "path": "rclcpp",
+    "in_rcr": true
+   },
+   {
+    "name": "rclcpp_action",
+    "path": "rclcpp_action",
+    "in_rcr": true
+   },
+   {
+    "name": "rclcpp_components",
+    "path": "rclcpp_components",
+    "in_rcr": true
+   },
+   {
+    "name": "rclcpp_lifecycle",
+    "path": "rclcpp_lifecycle",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rclpy": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rclpy",
+    "path": "rclpy",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rcpputils": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rcpputils",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rcutils": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rcutils",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/realtime_support": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rttest",
+    "path": "rttest",
+    "in_rcr": true
+   },
+   {
+    "name": "tlsf_cpp",
+    "path": "tlsf_cpp",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/resource_retriever_service": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "resource_retriever_interfaces",
+    "path": "resource_retriever_interfaces",
+    "in_rcr": true
+   },
+   {
+    "name": "resource_retriever_service",
+    "path": "resource_retriever_service",
+    "in_rcr": true
+   },
+   {
+    "name": "resource_retriever_service_plugin",
+    "path": "resource_retriever_service_plugin",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rmw": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rmw",
+    "path": "rmw",
+    "in_rcr": true
+   },
+   {
+    "name": "rmw_implementation_cmake",
+    "path": "rmw_implementation_cmake",
+    "in_rcr": true
+   },
+   {
+    "name": "rmw_security_common",
+    "path": "rmw_security_common",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rmw_connextdds": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rmw_connextdds",
+    "path": "rmw_connextdds",
+    "in_rcr": true
+   },
+   {
+    "name": "rmw_connextdds_common",
+    "path": "rmw_connextdds_common",
+    "in_rcr": true
+   },
+   {
+    "name": "rmw_connextddsmicro",
+    "path": "rmw_connextddsmicro",
+    "in_rcr": false
+   },
+   {
+    "name": "rti_connext_dds_cmake_module",
+    "path": "rti_connext_dds_cmake_module",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rmw_cyclonedds": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rmw_cyclonedds_cpp",
+    "path": "rmw_cyclonedds_cpp",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rmw_dds_common": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rmw_dds_common",
+    "path": "rmw_dds_common",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rmw_fastrtps": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rmw_fastrtps_cpp",
+    "path": "rmw_fastrtps_cpp",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rmw_implementation": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rmw_implementation",
+    "path": "rmw_implementation",
+    "in_rcr": true
+   },
+   {
+    "name": "test_rmw_implementation",
+    "path": "test_rmw_implementation",
+    "in_rcr": false
+   }
+  ]
+ },
+ "ros2/rmw_zenoh": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rmw_zenoh_cpp",
+    "path": "rmw_zenoh_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "test_rmw_zenoh_cpp",
+    "path": "test_rmw_zenoh_cpp",
+    "in_rcr": false
+   },
+   {
+    "name": "zenoh_cpp_vendor",
+    "path": "zenoh_cpp_vendor",
+    "in_rcr": true
+   },
+   {
+    "name": "zenoh_security_tools",
+    "path": "zenoh_security_tools",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/ros2_tracing": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "lttngpy",
+    "path": "lttngpy",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2trace",
+    "path": "ros2trace",
+    "in_rcr": true
+   },
+   {
+    "name": "test_ros2trace",
+    "path": "test_ros2trace",
+    "in_rcr": false
+   },
+   {
+    "name": "test_tracetools",
+    "path": "test_tracetools",
+    "in_rcr": false
+   },
+   {
+    "name": "test_tracetools_launch",
+    "path": "test_tracetools_launch",
+    "in_rcr": false
+   },
+   {
+    "name": "tracetools",
+    "path": "tracetools",
+    "in_rcr": true
+   },
+   {
+    "name": "tracetools_launch",
+    "path": "tracetools_launch",
+    "in_rcr": true
+   },
+   {
+    "name": "tracetools_read",
+    "path": "tracetools_read",
+    "in_rcr": true
+   },
+   {
+    "name": "tracetools_test",
+    "path": "tracetools_test",
+    "in_rcr": true
+   },
+   {
+    "name": "tracetools_trace",
+    "path": "tracetools_trace",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/ros2cli": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "ros2action",
+    "path": "ros2action",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2cli",
+    "path": "ros2cli",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2cli_test_interfaces",
+    "path": "ros2cli_test_interfaces",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2component",
+    "path": "ros2component",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2doctor",
+    "path": "ros2doctor",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2interface",
+    "path": "ros2interface",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2lifecycle",
+    "path": "ros2lifecycle",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2lifecycle_test_fixtures",
+    "path": "ros2lifecycle_test_fixtures",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2log",
+    "path": "ros2log",
+    "in_rcr": false
+   },
+   {
+    "name": "ros2multicast",
+    "path": "ros2multicast",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2node",
+    "path": "ros2node",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2param",
+    "path": "ros2param",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2pkg",
+    "path": "ros2pkg",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2run",
+    "path": "ros2run",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2service",
+    "path": "ros2service",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2topic",
+    "path": "ros2topic",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/ros2cli_common_extensions": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "ros2cli_common_extensions",
+    "path": "ros2cli_common_extensions",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/ros_testing": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "ros2test",
+    "path": "ros2test",
+    "in_rcr": true
+   },
+   {
+    "name": "ros_testing",
+    "path": "ros_testing",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rosbag2": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "lz4_cmake_module",
+    "path": "lz4_cmake_module",
+    "in_rcr": true
+   },
+   {
+    "name": "mcap_vendor",
+    "path": "mcap_vendor",
+    "in_rcr": true
+   },
+   {
+    "name": "ros2bag",
+    "path": "ros2bag",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2",
+    "path": "rosbag2",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_compression",
+    "path": "rosbag2_compression",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_compression_zstd",
+    "path": "rosbag2_compression_zstd",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_cpp",
+    "path": "rosbag2_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_examples_cpp",
+    "path": "rosbag2_examples/rosbag2_examples_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_examples_py",
+    "path": "rosbag2_examples/rosbag2_examples_py",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_interfaces",
+    "path": "rosbag2_interfaces",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_performance_benchmarking",
+    "path": "rosbag2_performance/rosbag2_performance_benchmarking",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_performance_benchmarking_msgs",
+    "path": "rosbag2_performance/rosbag2_performance_benchmarking_msgs",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_py",
+    "path": "rosbag2_py",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_storage",
+    "path": "rosbag2_storage",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_storage_default_plugins",
+    "path": "rosbag2_storage_default_plugins",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_storage_mcap",
+    "path": "rosbag2_storage_mcap",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_storage_sqlite3",
+    "path": "rosbag2_storage_sqlite3",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_test_common",
+    "path": "rosbag2_test_common",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_test_msgdefs",
+    "path": "rosbag2_test_msgdefs",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_tests",
+    "path": "rosbag2_tests",
+    "in_rcr": true
+   },
+   {
+    "name": "rosbag2_transport",
+    "path": "rosbag2_transport",
+    "in_rcr": true
+   },
+   {
+    "name": "zstd_cmake_module",
+    "path": "zstd_cmake_module",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rosidl": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_adapter",
+    "path": "rosidl_adapter",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_buffer",
+    "path": "rosidl_buffer",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_buffer_backend",
+    "path": "rosidl_buffer_backend",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_buffer_backend_registry",
+    "path": "rosidl_buffer_backend_registry",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_buffer_py",
+    "path": "rosidl_buffer_py",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_cli",
+    "path": "rosidl_cli",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_cmake",
+    "path": "rosidl_cmake",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_generator_c",
+    "path": "rosidl_generator_c",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_generator_cpp",
+    "path": "rosidl_generator_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_generator_tests",
+    "path": "rosidl_generator_tests",
+    "in_rcr": false
+   },
+   {
+    "name": "rosidl_generator_type_description",
+    "path": "rosidl_generator_type_description",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_parser",
+    "path": "rosidl_parser",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_pycommon",
+    "path": "rosidl_pycommon",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_runtime_c",
+    "path": "rosidl_runtime_c",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_runtime_cpp",
+    "path": "rosidl_runtime_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_typesupport_interface",
+    "path": "rosidl_typesupport_interface",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_typesupport_introspection_c",
+    "path": "rosidl_typesupport_introspection_c",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_typesupport_introspection_cpp",
+    "path": "rosidl_typesupport_introspection_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_typesupport_introspection_tests",
+    "path": "rosidl_typesupport_introspection_tests",
+    "in_rcr": false
+   }
+  ]
+ },
+ "ros2/rosidl_core": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_core_generators",
+    "path": "rosidl_core_generators",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_core_runtime",
+    "path": "rosidl_core_runtime",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rosidl_dds": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_generator_dds_idl",
+    "path": "rosidl_generator_dds_idl",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rosidl_defaults": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_default_generators",
+    "path": "rosidl_default_generators",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_default_runtime",
+    "path": "rosidl_default_runtime",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rosidl_dynamic_typesupport": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_dynamic_typesupport",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rosidl_dynamic_typesupport_fastrtps": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_dynamic_typesupport_fastrtps",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rosidl_python": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_generator_py",
+    "path": "rosidl_generator_py",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rosidl_runtime_py": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_runtime_py",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rosidl_typesupport": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_typesupport_c",
+    "path": "rosidl_typesupport_c",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_typesupport_cpp",
+    "path": "rosidl_typesupport_cpp",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_typesupport_tests",
+    "path": "rosidl_typesupport_tests",
+    "in_rcr": false
+   }
+  ]
+ },
+ "ros2/rosidl_typesupport_fastrtps": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rosidl_typesupport_fastrtps_c",
+    "path": "rosidl_typesupport_fastrtps_c",
+    "in_rcr": true
+   },
+   {
+    "name": "rosidl_typesupport_fastrtps_cpp",
+    "path": "rosidl_typesupport_fastrtps_cpp",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rpyutils": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rpyutils",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/rviz": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "rviz2",
+    "path": "rviz2",
+    "in_rcr": true
+   },
+   {
+    "name": "rviz_common",
+    "path": "rviz_common",
+    "in_rcr": true
+   },
+   {
+    "name": "rviz_default_plugins",
+    "path": "rviz_default_plugins",
+    "in_rcr": true
+   },
+   {
+    "name": "rviz_ogre_vendor",
+    "path": "rviz_ogre_vendor",
+    "in_rcr": true
+   },
+   {
+    "name": "rviz_rendering",
+    "path": "rviz_rendering",
+    "in_rcr": true
+   },
+   {
+    "name": "rviz_rendering_tests",
+    "path": "rviz_rendering_tests",
+    "in_rcr": true
+   },
+   {
+    "name": "rviz_visual_testing_framework",
+    "path": "rviz_visual_testing_framework",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/sros2": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "sros2",
+    "path": "sros2",
+    "in_rcr": true
+   },
+   {
+    "name": "sros2_cmake",
+    "path": "sros2_cmake",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/system_tests": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "test_cli",
+    "path": "test_cli",
+    "in_rcr": false
+   },
+   {
+    "name": "test_communication",
+    "path": "test_communication",
+    "in_rcr": false
+   },
+   {
+    "name": "test_quality_of_service",
+    "path": "test_quality_of_service",
+    "in_rcr": false
+   },
+   {
+    "name": "test_rclcpp",
+    "path": "test_rclcpp",
+    "in_rcr": false
+   },
+   {
+    "name": "test_rosidl_buffer",
+    "path": "test_rosidl_buffer",
+    "in_rcr": false
+   },
+   {
+    "name": "test_security",
+    "path": "test_security",
+    "in_rcr": false
+   }
+  ]
+ },
+ "ros2/test_interface_files": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "test_interface_files",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/tlsf": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "tlsf",
+    "path": "tlsf",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/unique_identifier_msgs": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "unique_identifier_msgs",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/urdf": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "urdf",
+    "path": "urdf",
+    "in_rcr": true
+   },
+   {
+    "name": "urdf_parser_plugin",
+    "path": "urdf_parser_plugin",
+    "in_rcr": true
+   }
+  ]
+ },
+ "ros2/yaml_cpp_vendor": {
+  "ref": "rolling",
+  "status": "ok",
+  "packages": [
+   {
+    "name": "yaml_cpp_vendor",
+    "path": "",
+    "in_rcr": true
+   }
+  ]
+ }
+}

@@ -1,0 +1,2 @@
+{"repo": "ros2/examples", "ref": "rolling", "subdir": "rclcpp/services/deferred_response",
+ "template": "examples_rclcpp_minimal_service"}

@@ -1,0 +1,81 @@
+# Copyright 2026 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@rosdistro//cc:defs.bzl", "collect_transitive_dynamic_deps", "ros_local_defines")
+load("@rosidl_default_generators//:defs.bzl", "default_generators")
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+package(default_visibility = ["//visibility:public"])
+
+# rosidl_generate_interfaces(${PROJECT_NAME} <test_interface_files msg/srv> SKIP_INSTALL)
+default_generators(
+    package_xml = "package.xml",
+    deps = [
+        "//msg:Arrays",
+        "//msg:BasicTypes",
+        "//msg:BoundedSequences",
+        "//msg:Constants",
+        "//msg:Defaults",
+        "//msg:Empty",
+        "//msg:MultiNested",
+        "//msg:Nested",
+        "//msg:Strings",
+        "//msg:UnboundedSequences",
+        "//msg:WStrings",
+        "//srv:Arrays",
+        "//srv:BasicTypes",
+        "//srv:Empty",
+    ],
+)
+
+DEPENDENCIES = {
+    "@rcpputils//:rcpputils": "@rcpputils//:rcpputils_library",
+    "@rcutils//:rcutils": "@rcutils//:rcutils_library",
+    "@rosidl_buffer//:rosidl_buffer": "@rosidl_buffer//:rosidl_buffer_library",
+    "@rosidl_runtime_c//:rosidl_runtime_c": "@rosidl_runtime_c//:rosidl_runtime_c_library",
+    "@rosidl_runtime_cpp//:rosidl_runtime_cpp": "@rosidl_runtime_cpp//:rosidl_runtime_cpp_library",
+    "@rosidl_typesupport_interface//:rosidl_typesupport_interface": "@rosidl_typesupport_interface//:rosidl_typesupport_interface_library",
+    "@rosidl_typesupport_introspection_c//:rosidl_typesupport_introspection_c": "@rosidl_typesupport_introspection_c//:rosidl_typesupport_introspection_c_library",
+    "@rosidl_typesupport_introspection_cpp//:rosidl_typesupport_introspection_cpp": "@rosidl_typesupport_introspection_cpp//:rosidl_typesupport_introspection_cpp_library",
+    "@service_msgs//:cc_shared": "@service_msgs//:cc",
+    ":cc_shared": ":cc",
+}
+
+collect_transitive_dynamic_deps(
+    name = "transitive_dynamic_deps",
+    dynamic_deps = DEPENDENCIES.keys(),
+    visibility = ["//visibility:private"],
+)
+
+cc_library(
+    name = "rosidl_typesupport_introspection_tests_library",
+    hdrs = glob(["include/**/*.hpp"]),
+    includes = ["include"],
+    deps = DEPENDENCIES.values(),
+)
+
+# file(GLOB test/test_*.cpp): one gtest per file
+[
+    cc_test(
+        name = src.removeprefix("test/").removesuffix(".cpp"),
+        timeout = "moderate",
+        srcs = [src, "test/introspection_libraries_under_test.hpp"],
+        copts = ["-Wno-gnu-zero-variadic-macro-arguments"],
+        dynamic_deps = [":transitive_dynamic_deps"],
+        includes = ["test"],
+        local_defines = ros_local_defines(),
+        deps = [":rosidl_typesupport_introspection_tests_library", "@rosdistro//cc:googletest"],
+    )
+    for src in glob(["test/test_*.cpp"])
+]

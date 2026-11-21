@@ -1,0 +1,62 @@
+--- /home/mjcarroll.oss/workspaces/rcr-nightly/ros-central-registry/modules/rosdistro/lyrical.2026-10-05.rcr.4/overlay/python/defs.bzl	2026-11-20 12:04:59.010960197 -0600
++++ rosdistro/python/defs.bzl	2026-11-21 09:09:22.946343088 -0600
+@@ -107,10 +107,31 @@
+ #   use_repo(pip_ros, "pip_ros")
+ pip_ros = module_extension(implementation = _pip_ros_impl)
+ 
++def ament_index_env(env = None):
++    """Adds the plugin that lets ament_index_python find the ament index in the runfiles.
++
++    Python tests have no AMENT_PREFIX_PATH; the Bazel provider in ament_index_python registers
++    the runfiles root as a prefix when it holds an ament index (see ament_index.bzl). The variable
++    is inherited by child processes, such as nodes started by launch.
++
++    Args:
++      env: The test's own env dict, if any.
++
++    Returns:
++      A new env dict that includes the plugin.
++    """
++    merged = dict(env or {})
++    plugins = [p for p in merged.get("AMENT_INDEX_PYTHON_PLUGINS", "").split(",") if p]
++    if "ament_index_python._bazel" not in plugins:
++        plugins.append("ament_index_python._bazel")
++    merged["AMENT_INDEX_PYTHON_PLUGINS"] = ",".join(plugins)
++    return merged
++
+ # Macro for pytest invocations.
+-def py_pytest(name, srcs, deps = [], args = [], **kwargs):
++def py_pytest(name, srcs, deps = [], args = [], env = None, **kwargs):
+     _py_test(
+         name = name,
++        env = ament_index_env(env),
+         main = "@rosdistro//python:pytest_main.py",
+         srcs = srcs + [
+             "@rosdistro//python:pytest_main.py",
+--- /home/mjcarroll.oss/workspaces/rcr-nightly/ros-central-registry/modules/launch_testing/3.9.8-1.rcr.0/overlay/defs.bzl	2026-11-20 12:04:58.804336775 -0600
++++ launch_testing/defs.bzl	2026-11-21 09:09:22.938202478 -0600
+@@ -14,6 +14,7 @@
+ 
+ """Bazel rules for running ROS launch tests."""
+ 
++load("@rosdistro//python:defs.bzl", "ament_index_env")
+ load("@rules_python//python:defs.bzl", "PyInfo", _py_test = "py_test")
+ load("@rules_python//python/api:api.bzl", "py_common")
+ 
+@@ -111,7 +112,7 @@
+             result.append(d)
+     return result
+ 
+-def launch_test(name, src, data = [], deps = [], args = [], **kwargs):
++def launch_test(name, src, data = [], deps = [], args = [], env = None, **kwargs):
+     """Define a Bazel test target for a launch test file.
+ 
+     Args:
+@@ -152,6 +153,7 @@
+         srcs = [main_script],
+         args = ["$(location %s)" % src_label] + list(args),
+         data = _merge_data(data, [src_label]),
++        env = ament_index_env(env),
+         deps = [":" + deps_target],
+         imports = imports,
+         tags = tags,

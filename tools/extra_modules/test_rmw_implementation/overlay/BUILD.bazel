@@ -1,0 +1,99 @@
+# Copyright 2026 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@rosdistro//cc:defs.bzl", "collect_transitive_dynamic_deps", "ros_local_defines")
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
+package(default_visibility = ["//visibility:public"])
+
+RMW = "rmw_fastrtps_cpp"
+
+DEPENDENCIES = {
+    "@rcutils//:rcutils": "@rcutils//:rcutils_library",
+    "@rmw//:rmw": "@rmw//:rmw_library",
+    "@rmw_dds_common//:rmw_dds_common": "@rmw_dds_common//:rmw_dds_common_library",
+    "@rmw_implementation//:rmw_implementation": "@rmw_implementation//:rmw_implementation_library",
+    "@rosidl_runtime_c//:rosidl_runtime_c": "@rosidl_runtime_c//:rosidl_runtime_c_library",
+    "@test_msgs//:cc_shared": "@test_msgs//:cc",
+}
+
+collect_transitive_dynamic_deps(
+    name = "transitive_dynamic_deps",
+    dynamic_deps = DEPENDENCIES.keys(),
+    visibility = ["//visibility:private"],
+)
+
+# test_api(): ament_add_ros_isolated_gtest_test per executable, for the build's one RMW
+[
+    cc_test(
+        name = name,
+        timeout = timeout,
+        srcs = ["test/{}.cpp".format(name)] + glob(["test/*.hpp", "test/*.h"]),
+        data = ["@test_msgs//:ament_index"],
+        dynamic_deps = [
+            ":transitive_dynamic_deps",
+            "@osrf_testing_tools_cpp//:memory_tools_interpose",
+        ],
+        env = {"RMW_IMPLEMENTATION": RMW},
+        includes = ["test"],
+        local_defines = ros_local_defines(),
+        deps = DEPENDENCIES.values() + [
+            "@osrf_testing_tools_cpp//:memory_tools",
+            "@rosdistro//cc:googletest",
+        ],
+    )
+    for name, timeout in {
+        "test_init_shutdown": "moderate",
+        "test_init_options": "moderate",
+        "test_create_destroy_node": "moderate",
+        "test_publisher": "moderate",
+        "test_subscription": "long",
+        "test_serialize_deserialize": "moderate",
+        "test_publisher_allocator": "moderate",
+        "test_subscription_allocator": "moderate",
+        "test_wait_set": "moderate",
+        "test_graph_api": "long",
+        "test_unique_identifiers": "moderate",
+        "test_service": "moderate",
+        "test_client": "long",
+        "test_qos_profile_check_compatible": "moderate",
+        "test_duration_infinite": "moderate",
+        "test_event": "moderate",
+    }.items()
+]
+
+# only for rmw_fastrtps*: FASTRTPS_DEFAULT_PROFILES_FILE=test/no_intraprocess_profile.xml
+cc_test(
+    name = "test_event_message_lost_deadlock",
+    timeout = "moderate",
+    srcs = ["test/test_event_message_lost_deadlock.cpp"] + glob(["test/*.hpp", "test/*.h"]),
+    data = [
+        "test/no_intraprocess_profile.xml",
+        "@test_msgs//:ament_index",
+    ],
+    dynamic_deps = [
+        ":transitive_dynamic_deps",
+        "@osrf_testing_tools_cpp//:memory_tools_interpose",
+    ],
+    env = {
+        "FASTRTPS_DEFAULT_PROFILES_FILE": "$(rootpath test/no_intraprocess_profile.xml)",
+        "RMW_IMPLEMENTATION": RMW,
+    },
+    includes = ["test"],
+    local_defines = ros_local_defines(),
+    deps = DEPENDENCIES.values() + [
+        "@osrf_testing_tools_cpp//:memory_tools",
+        "@rosdistro//cc:googletest",
+    ],
+)
