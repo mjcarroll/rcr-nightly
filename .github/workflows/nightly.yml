@@ -4,33 +4,79 @@ on:
     - cron: '17 6 * * *'
   workflow_dispatch:
     inputs:
-      shards:
-        description: 'Number of shards (sets the matrix size via shard_count; max 20)'
+      since_hours:
+        description: 'Only test what changed on the tracked branches in the last N hours (+ downstream). 0 = the full suite.'
+        default: '24'
+      max_shards:
+        description: 'Maximum number of test shards (jobs)'
         default: '12'
+      slim:
+        description: 'Slim @rosdistro//:ament_package (smaller build graph; not the stock RCR environment)'
+        default: false
+        type: boolean
 
 env:
-  SHARDS: ${{ inputs.shards || '12' }}
-  GH_TOKEN: ${{ github.token }}  # tools resolve master SHAs with `gh api`
+  GH_TOKEN: ${{ github.token }}  # tools resolve master SHAs / recent commits with `gh api`
+  MM_CACHE: ${{ github.workspace }}/.mm_cache
+  SINCE_HOURS: ${{ inputs.since_hours || '24' }}
+  SLIM_ROSDISTRO: ${{ inputs.slim && '1' || '' }}
 
 jobs:
-  plan:
+  prepare:
     runs-on: ubuntu-24.04
     outputs:
-      matrix: ${{ steps.m.outputs.matrix }}
+      count: ${{ steps.plan.outputs.count }}
+      shards: ${{ steps.plan.outputs.shards }}
+      matrix: ${{ steps.plan.outputs.matrix }}
     steps:
-      - id: m
+      - uses: actions/checkout@v4
+      - uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: true
+          repository-cache: true
+      # Source tarballs are keyed by commit SHA, so only repos that changed since the last run download.
+      - uses: actions/cache@v4
+        with:
+          path: .mm_cache
+          key: mm-cache-${{ github.run_id }}
+          restore-keys: mm-cache-
+      - name: Generate master registry and select targets
         run: |
-          n=$SHARDS
-          echo "matrix=$(python3 -c "import json;print(json.dumps(list(range($n))))")" >> "$GITHUB_OUTPUT"
+          ci/setup.sh
+          [ "$SINCE_HOURS" = "0" ] && unset SINCE_HOURS
+          GENERATE_ONLY=1 tools/run_nightly_master.sh
+      - id: plan
+        env:
+          MAX_SHARDS: ${{ inputs.max_shards || '12' }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import math, os
+          n = len([l for l in open('ros-central-registry/workspace/nightly-targets.txt') if l.strip()])
+          full = os.environ.get('SINCE_HOURS', '24') == '0'
+          per = 30 if full else 80   # full list is package patterns, the selected list is test targets
+          k = 0 if n == 0 else max(1, min(int(os.environ['MAX_SHARDS']), math.ceil(n / per)))
+          print(f"count={n}\nshards={k}\nmatrix={list(range(k))}")
+          PY
+          echo "### Plan" >> "$GITHUB_STEP_SUMMARY"
+          { echo "since_hours=$SINCE_HOURS slim=${SLIM_ROSDISTRO:-0}"; echo; echo "changed:"; cat ros-central-registry/workspace/changed.txt 2>/dev/null | sed 's/^/- /'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prepared
+          path: |
+            master-registry
+            ros-central-registry/workspace/nightly-targets.txt
+            gen_all.log
+          retention-days: 3
 
   test:
-    needs: plan
+    needs: prepare
+    if: needs.prepare.outputs.count != '0'
     runs-on: ubuntu-24.04
     timeout-minutes: 350
     strategy:
       fail-fast: false
       matrix:
-        shard: ${{ fromJson(needs.plan.outputs.matrix) }}
+        shard: ${{ fromJson(needs.prepare.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
       - uses: bazel-contrib/setup-bazel@0.15.0
@@ -44,14 +90,20 @@ jobs:
         run: ci/buildbuddy.sh
       - name: Free disk space
         run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
-      - name: Generate workspace
-        run: |
-          ci/setup.sh
-          NIGHTLY_SHARD=${{ matrix.shard }}/$SHARDS GENERATE_ONLY=1 tools/run_nightly_master.sh
-      - name: Test shard ${{ matrix.shard }}/${{ env.SHARDS }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: prepared
+          path: prepared
+      - name: Test shard ${{ matrix.shard }}/${{ needs.prepare.outputs.shards }}
+        env:
+          SINCE_HOURS: ''  # selection already done in prepare
         run: |
           set -o pipefail
-          NIGHTLY_SHARD=${{ matrix.shard }}/$SHARDS tools/run_nightly_master.sh --test_output=errors 2>&1 | tee nightly.log || true
+          ci/setup.sh
+          mv prepared/master-registry .
+          SKIP_GENERATE=1 NIGHTLY_TARGETS=prepared/ros-central-registry/workspace/nightly-targets.txt \
+            NIGHTLY_SHARD=${{ matrix.shard }}/${{ needs.prepare.outputs.shards }} \
+            tools/run_nightly_master.sh --test_output=errors 2>&1 | tee nightly.log || true
       - name: Summarize
         if: always()
         run: |
@@ -65,8 +117,8 @@ jobs:
             summary-${{ matrix.shard }}.json
 
   report:
-    needs: test
-    if: always()
+    needs: [prepare, test]
+    if: always() && needs.prepare.result == 'success'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/download-artifact@v4
@@ -85,7 +137,7 @@ jobs:
                   if s not in ('PASSED', 'SKIPPED'): bad.append((s, t))
               bad += [('BUILD', e) for e in d.get('build_errors', [])]
           print('## Nightly (all shards)\n')
-          print(', '.join(f'{k}: {v}' for k, v in sorted(st.items())) or 'no summaries found')
+          print(', '.join(f'{k}: {v}' for k, v in sorted(st.items())) or 'nothing to test (no changes in the window) or no summaries')
           print('\n### Not passing\n')
           for s, t in sorted(bad): print(f'- `{t}` {s}')
           PY

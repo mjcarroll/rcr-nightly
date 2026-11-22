@@ -33,8 +33,10 @@ here once merged. Currently: ros/class_loader#253, ros2/rclpy#1778.
 
 ## Workflows
 
-- **nightly** (cron + manual): shards `nightly-targets.txt` across a matrix (`NIGHTLY_SHARD=i/N`),
-  summarizes each shard and merges the results into the run summary.
+- **nightly** (cron + manual): `prepare` generates the master registry once and selects what to test
+  (`SINCE_HOURS`, default 24: the packages with commits on their tracked branch in that window plus
+  everything downstream, found with `bazel query rdeps`; `0` = the full suite), then sharded `test`
+  jobs consume that output and a `report` job merges the summaries. Source tarballs are cached by SHA.
 - **flake-hunt** (manual): give it targets and `runs_per_test`; it reports pass/flake/timeout counts.
 
 Hosted runners (4 cores, ~14 GB disk, 6 h cap) are a lot smaller than the machine this was developed
