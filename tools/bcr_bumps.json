@@ -1,0 +1,6 @@
+[
+  {"module": "mcap", "base": "2.1.3", "version": "2.2.0",
+   "url": "https://github.com/foxglove/mcap/archive/refs/tags/releases/cpp/v2.2.0.tar.gz",
+   "strip_prefix": "mcap-releases-cpp-v2.2.0/cpp/mcap",
+   "why": "rosbag2_storage_mcap on master uses ReadMessageOptions::startingAt/endingAt (mcap >= 2.2.0); BCR has 2.1.3"}
+]

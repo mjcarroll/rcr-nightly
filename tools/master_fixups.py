@@ -78,6 +78,14 @@ FIXUPS = {
         '    srcs = ["{0}.py".format(test)],\n'
         '    timeout = "short" if test in ["test_bw_delay_hz", "test_cli", "test_echo_pub", "test_use_sim_time"] else "moderate",\n',
     )],
+    # New upstream service (used by rosbag2_transport's recorder) that the release overlay does not know about.
+    "rosbag2_interfaces": [
+        ("srv/BUILD.bazel", '    "GetRate.srv",\n', '    "GetRate.srv",\n    "GetSubscribedTopics.srv",\n'),
+        ("srv/BUILD.bazel",
+         'ros_service(\n    name = "IsPaused",',
+         'ros_service(\n    name = "GetSubscribedTopics",\n    src = "GetSubscribedTopics.srv",\n)\n\nros_service(\n    name = "IsPaused",'),
+        ("BUILD.bazel", '        "//srv:GetRate",\n', '        "//srv:GetRate",\n        "//srv:GetSubscribedTopics",\n'),
+    ],
     # Upstream merged rmw_fastrtps_shared_cpp into rmw_fastrtps_cpp (tracked in mjcarroll/ros-project-management#82):
     # drop the old module dependency, resolve merged `rmw_fastrtps_shared_cpp/...` includes from src/, and carry
     # over the old shared module's other dependencies.
