@@ -15,8 +15,8 @@ python3 -u tools/make_master_module.py --rcr ros-central-registry --out master-r
 python3 -u tools/make_extra_module.py --rcr ros-central-registry --out master-registry $(ls tools/extra_modules) >> gen_all.log 2>&1
 python3 -u tools/make_bcr_bump.py --out master-registry >> gen_all.log 2>&1
 (cat $W/MODULE.bazel.orig; echo; echo "# --- extra (unreleased) modules ---"; cat master-registry/extra_deps.bazel; echo; echo "# --- master overrides ---"; cat master-registry/overrides.bazel) > $W/MODULE.bazel
-# ros2-repos.txt lists the released-package patterns only: add the extra (unreleased) test modules
-cp $W/ros2-repos.txt $W/nightly-targets.txt
+# the released-package patterns, plus the extra (unreleased) test modules
+tr ' ' '\n' < pkgs_ros2_repos.txt | sed '/^$/d; s|^|@|; s|$|//...|' | LC_ALL=C sort > $W/nightly-targets.txt
 for m in $(ls tools/extra_modules); do echo "@$m//..." >> $W/nightly-targets.txt; done
 if [ -n "${NIGHTLY_TARGETS:-}" ]; then cp "$NIGHTLY_TARGETS" $W/nightly-targets.txt; fi
 if [ -n "${NIGHTLY_SHARD:-}" ]; then
