@@ -70,14 +70,6 @@ FIXUPS = {
          ') for test in [\n    "external_load_test",\n    "unmanaged_test",\n]]\n\n'
          'cc_test(\n    name = "class_loader_utest",'),
     ],
-    # These drive the `ros2` CLI, which cannot discover its verbs under Bazel yet (no dist-info entry points,
-    # see #85), so they fail by hanging until the default 300 s timeout. Fail fast until that is fixed.
-    "ros2topic": [(
-        "test/BUILD.bazel",
-        '    srcs = ["{0}.py".format(test)],\n',
-        '    srcs = ["{0}.py".format(test)],\n'
-        '    timeout = "short" if test in ["test_bw_delay_hz", "test_cli", "test_echo_pub", "test_use_sim_time"] else "moderate",\n',
-    )],
     # New upstream service (used by rosbag2_transport's recorder) that the release overlay does not know about.
     "rosbag2_interfaces": [
         ("srv/BUILD.bazel", '    "GetRate.srv",\n', '    "GetRate.srv",\n    "GetSubscribedTopics.srv",\n'),
