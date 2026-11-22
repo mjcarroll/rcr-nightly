@@ -10,6 +10,7 @@ on:
 
 env:
   SHARDS: ${{ inputs.shards || '12' }}
+  GH_TOKEN: ${{ github.token }}  # tools resolve master SHAs with `gh api`
 
 jobs:
   plan:

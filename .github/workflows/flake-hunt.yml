@@ -12,6 +12,9 @@ on:
         description: 'per-run test timeout (s)'
         default: '120'
 
+env:
+  GH_TOKEN: ${{ github.token }}  # tools resolve master SHAs with `gh api`
+
 jobs:
   hunt:
     runs-on: ubuntu-24.04
