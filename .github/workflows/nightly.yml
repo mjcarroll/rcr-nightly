@@ -89,7 +89,8 @@ jobs:
           BUILDBUDDY_API_KEY: ${{ secrets.BUILDBUDDY_API_KEY }}
         run: ci/buildbuddy.sh
       - name: Free disk space
-        run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+        # not the Android SDK: ANDROID_HOME points at it and Bazel's rules_android fails if it is gone
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /opt/hostedtoolcache/CodeQL
       - uses: actions/download-artifact@v4
         with:
           name: prepared
