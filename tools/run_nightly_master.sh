@@ -9,6 +9,7 @@ export PATH="$HOME/.local/bin:$PATH"
 HERE="$(cd "$(dirname "$0")/.." && pwd)"; cd "$HERE"
 W=ros-central-registry/workspace
 rm -rf master-registry
+trap 'rc=$?; [ $rc -eq 0 ] || { echo "== failed (exit $rc); tail of gen_all.log:"; tail -40 gen_all.log; }' EXIT
 python3 -u tools/make_master_module.py --rcr ros-central-registry --out master-registry \
   --workspace-module $W/MODULE.bazel.orig --map ros2_repos_packages.json $(cat pkgs_ros2_repos.txt) > gen_all.log 2>&1
 python3 -u tools/make_extra_module.py --rcr ros-central-registry --out master-registry $(ls tools/extra_modules) >> gen_all.log 2>&1
