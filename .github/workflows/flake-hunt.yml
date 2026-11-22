@@ -26,6 +26,10 @@ jobs:
           bazelisk-cache: true
           disk-cache: flake-hunt
           repository-cache: true
+      - name: BuildBuddy
+        env:
+          BUILDBUDDY_API_KEY: ${{ secrets.BUILDBUDDY_API_KEY }}
+        run: ci/buildbuddy.sh
       - name: Generate workspace
         run: |
           ci/setup.sh

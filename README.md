@@ -41,6 +41,17 @@ Hosted runners (4 cores, ~14 GB disk, 6 h cap) are a lot smaller than the machin
 on, so treat the first runs as experimental: shard count, disk cleanup and the cache may need tuning.
 Tests needing a display (rviz) or tracing (`--@rosdistro//:enable_tracing`) are not expected to pass yet.
 
+## Caching
+
+Runs use [BuildBuddy](https://www.buildbuddy.io) as a remote cache and for the build/test results UI
+when the `BUILDBUDDY_API_KEY` repository secret is set (`ci/buildbuddy.sh` writes `~/.bazelrc`; it
+overrides RCR's read-only default cache, so the first run populates it). Without the secret, runs fall
+back to the GitHub Actions disk cache and RCR's read-only cache. Set it with:
+
+```bash
+gh secret set BUILDBUDDY_API_KEY -R mjcarroll/rcr-nightly
+```
+
 ## Running locally
 
 ```bash
