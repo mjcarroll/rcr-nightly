@@ -1,0 +1,42 @@
+name: flake-hunt
+on:
+  workflow_dispatch:
+    inputs:
+      targets:
+        description: 'Bazel targets, space separated (e.g. @test_launch_ros//:actions__test_ros_timer)'
+        required: true
+      runs:
+        description: 'runs_per_test'
+        default: '100'
+      timeout:
+        description: 'per-run test timeout (s)'
+        default: '120'
+
+jobs:
+  hunt:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: true
+          disk-cache: flake-hunt
+          repository-cache: true
+      - name: Generate workspace
+        run: |
+          ci/setup.sh
+          GENERATE_ONLY=1 tools/run_nightly_master.sh
+      - name: Hunt
+        run: |
+          set -o pipefail
+          cd ros-central-registry/workspace
+          bazel test ${{ inputs.targets }} --config=ci --runs_per_test=${{ inputs.runs }} \
+            --local_test_jobs=4 --test_timeout=${{ inputs.timeout }} --flaky_test_attempts=1 \
+            --keep_going --test_output=errors 2>&1 | tee ../../hunt.log
+      - if: always()
+        run: |
+          { echo '## Flake hunt'; grep -E "^(@|//).*(PASSED|FAILED|TIMEOUT|FLAKY)|Stats over|^Executed" hunt.log; } >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: hunt-log, path: hunt.log }
