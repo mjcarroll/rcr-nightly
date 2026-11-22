@@ -1,0 +1,21 @@
+--- a/BUILD.bazel	2026-11-22 17:09:56.635656116 -0600
++++ b/BUILD.bazel	2026-11-22 17:09:56.662666814 -0600
+@@ -124,7 +124,8 @@
+ 
+ ament_package(
+     name = "ament_package",
+-    libraries = THIRD_PARTY_SHARED_LIBRARIES + select({
++    # SLIM (rcr-nightly): do not bundle every third-party library / pip wheel into the underlay.
++    libraries = select({
+         ":tracing_enabled_linux": [
+             "//cc:lttng_ctl_shared",
+             "//cc:lttng_ust_shared",
+@@ -133,7 +134,7 @@
+     }),
+     # Every pip dependency of the distribution, so the underlay's
+     # lib/pythonX.Y/site-packages is self-contained.
+-    python = all_requirements,
++    python = [],
+     python_strip_prefix = "site-packages",
+     deps = [],
+ )

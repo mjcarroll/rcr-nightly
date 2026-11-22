@@ -4,6 +4,8 @@
 # Env: NIGHTLY_SHARD=i/N  run only shard i (0-based) of N, split by target pattern (CI matrix)
 #      NIGHTLY_TARGETS=f  run the targets listed in file f instead of the whole nightly
 #      GENERATE_ONLY=1    stop after generating the workspace
+#      SLIM_ROSDISTRO=1   patch @rosdistro//:ament_package to not bundle every third-party lib / pip wheel
+#                         (cuts the target graph ~40%, actions ~57%; for flake hunts, not the faithful nightly)
 set -euo pipefail
 export PATH="$HOME/.local/bin:$PATH"
 HERE="$(cd "$(dirname "$0")/.." && pwd)"; cd "$HERE"
@@ -15,6 +17,11 @@ python3 -u tools/make_master_module.py --rcr ros-central-registry --out master-r
 python3 -u tools/make_extra_module.py --rcr ros-central-registry --out master-registry $(ls tools/extra_modules) >> gen_all.log 2>&1
 python3 -u tools/make_bcr_bump.py --out master-registry >> gen_all.log 2>&1
 (cat $W/MODULE.bazel.orig; echo; echo "# --- extra (unreleased) modules ---"; cat master-registry/extra_deps.bazel; echo; echo "# --- master overrides ---"; cat master-registry/overrides.bazel) > $W/MODULE.bazel
+if [ -n "${SLIM_ROSDISTRO:-}" ]; then
+  RD=$(grep -o 'bazel_dep(name = "rosdistro", version = "[^"]*"' $W/MODULE.bazel | sed 's/.*version = "//; s/"$//')
+  cp tools/rosdistro_slim/slim_ament_package.patch $W/rosdistro_slim.patch
+  echo "single_version_override(module_name = \"rosdistro\", version = \"$RD\", patches = [\"//:rosdistro_slim.patch\"], patch_strip = 1)" >> $W/MODULE.bazel
+fi
 # the released-package patterns, plus the extra (unreleased) test modules
 tr ' ' '\n' < pkgs_ros2_repos.txt | sed '/^$/d; s|^|@|; s|$|//...|' | LC_ALL=C sort > $W/nightly-targets.txt
 for m in $(ls tools/extra_modules); do echo "@$m//..." >> $W/nightly-targets.txt; done

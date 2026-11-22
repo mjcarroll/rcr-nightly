@@ -8,6 +8,10 @@ on:
       runs:
         description: 'runs_per_test'
         default: '100'
+      slim:
+        description: 'Slim @rosdistro//:ament_package (much smaller build graph)'
+        default: true
+        type: boolean
       timeout:
         description: 'per-run test timeout (s)'
         default: '120'
@@ -33,7 +37,7 @@ jobs:
       - name: Generate workspace
         run: |
           ci/setup.sh
-          GENERATE_ONLY=1 tools/run_nightly_master.sh
+          SLIM_ROSDISTRO=${{ inputs.slim && '1' || '' }} GENERATE_ONLY=1 tools/run_nightly_master.sh
       - name: Hunt
         run: |
           set -o pipefail
