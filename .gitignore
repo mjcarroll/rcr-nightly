@@ -6,3 +6,6 @@
 *.log
 __pycache__/
 /ros_test_paths/
+
+bazel-remote-grpc.log
+execution_log.binpb.zst

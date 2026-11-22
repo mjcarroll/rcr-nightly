@@ -15,6 +15,12 @@ common --remote_cache=grpcs://remote.buildbuddy.io
 common --remote_header=x-buildbuddy-api-key=$BUILDBUDDY_API_KEY
 common --remote_upload_local_results=$upload
 common --remote_timeout=600
+common --remote_cache_compression
+common --remote_grpc_log=${RUNNER_TEMP:-/tmp}/bazel-remote-grpc.log
+common --execution_log_compact_file=${RUNNER_TEMP:-/tmp}/execution_log.binpb.zst
+common --noslim_profile
+common --experimental_profile_include_target_label
+common --experimental_profile_include_primary_output
 common --bes_backend=grpcs://remote.buildbuddy.io
 common --bes_results_url=https://app.buildbuddy.io/invocation/
 common --build_metadata=ROLE=CI

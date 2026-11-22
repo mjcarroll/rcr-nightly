@@ -46,4 +46,10 @@ jobs:
           { echo '## Flake hunt'; grep -E "^(@|//).*(PASSED|FAILED|TIMEOUT|FLAKY)|Stats over|^Executed" hunt.log; } >> "$GITHUB_STEP_SUMMARY" || true
       - uses: actions/upload-artifact@v4
         if: always()
-        with: { name: hunt-log, path: hunt.log }
+        with:
+          name: hunt-log
+          path: |
+            hunt.log
+            ${{ runner.temp }}/execution_log.binpb.zst
+            ${{ runner.temp }}/bazel-remote-grpc.log
+          if-no-files-found: ignore
