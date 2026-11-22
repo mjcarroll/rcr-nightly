@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
     inputs:
       since_hours:
-        description: 'Only test what changed on the tracked branches in the last N hours (+ downstream). 0 = the full suite.'
-        default: '24'
+        description: 'Shortcut: only test what changed on the tracked branches in the last N hours (+ downstream). 0 = the full suite (the default, like the real nightly).'
+        default: '0'
       max_shards:
         description: 'Maximum number of test shards (jobs)'
         default: '12'
@@ -18,7 +18,7 @@ on:
 env:
   GH_TOKEN: ${{ github.token }}  # tools resolve master SHAs / recent commits with `gh api`
   MM_CACHE: ${{ github.workspace }}/.mm_cache
-  SINCE_HOURS: ${{ inputs.since_hours || '24' }}
+  SINCE_HOURS: ${{ inputs.since_hours || '0' }}
   SLIM_ROSDISTRO: ${{ inputs.slim && '1' || '' }}
 
 jobs:
@@ -52,7 +52,7 @@ jobs:
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import math, os
           n = len([l for l in open('ros-central-registry/workspace/nightly-targets.txt') if l.strip()])
-          full = os.environ.get('SINCE_HOURS', '24') == '0'
+          full = os.environ.get('SINCE_HOURS', '0') == '0'
           per = 30 if full else 80   # full list is package patterns, the selected list is test targets
           k = 0 if n == 0 else max(1, min(int(os.environ['MAX_SHARDS']), math.ceil(n / per)))
           print(f"count={n}\nshards={k}\nmatrix={list(range(k))}")
@@ -103,7 +103,7 @@ jobs:
           mv prepared/master-registry .
           SKIP_GENERATE=1 NIGHTLY_TARGETS=prepared/ros-central-registry/workspace/nightly-targets.txt \
             NIGHTLY_SHARD=${{ matrix.shard }}/${{ needs.prepare.outputs.shards }} \
-            tools/run_nightly_master.sh --test_output=errors 2>&1 | tee nightly.log || true
+            tools/run_nightly_master.sh --test_output=errors --nocache_test_results 2>&1 | tee nightly.log || true
       - name: Summarize
         if: always()
         run: |
