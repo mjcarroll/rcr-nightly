@@ -54,6 +54,22 @@ FIXUPS = {
         '    deps = PLUGIN_DEPENDENCIES.values(),\n)\n\n'
         'cc_shared_library(\n    name = "point_cloud_transport_plugins",',
     )],
+    # The reconciler appended the two new upstream gtest sources to every sibling srcs list (the plugin
+    # libraries included). Remove them there and give each its own cc_test (CMake: ament_add_gtest).
+    "class_loader": [
+        ("test/BUILD.bazel", '        "external_load_test.cpp",\n', ''),
+        ("test/BUILD.bazel", '        "unmanaged_test.cpp",\n', ''),
+        ("test/BUILD.bazel",
+         'cc_test(\n    name = "class_loader_utest",',
+         '[cc_test(\n'
+         '    name = "class_loader_" + test,\n'
+         '    srcs = [\n        "base.hpp",\n        test + ".cpp",\n    ],\n'
+         '    data = [\n        ":ament_index_class_loader_utest",\n    ],\n'
+         '    dynamic_deps = ["//:transitive_dynamic_deps"],\n'
+         '    deps = DEPENDENCIES.values() + [\n        "//:class_loader_library",\n        "@rosdistro//cc:googletest",\n    ],\n'
+         ') for test in [\n    "external_load_test",\n    "unmanaged_test",\n]]\n\n'
+         'cc_test(\n    name = "class_loader_utest",'),
+    ],
     # Upstream merged rmw_fastrtps_shared_cpp into rmw_fastrtps_cpp (tracked in mjcarroll/ros-project-management#82):
     # drop the old module dependency, resolve merged `rmw_fastrtps_shared_cpp/...` includes from src/, and carry
     # over the old shared module's other dependencies.
