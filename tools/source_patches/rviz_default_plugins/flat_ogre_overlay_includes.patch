@@ -1,0 +1,15 @@
+--- a/src/rviz_default_plugins/displays/overlay/overlay_utils.cpp
++++ b/src/rviz_default_plugins/displays/overlay/overlay_utils.cpp
+@@ -42,9 +42,9 @@
+ #include <OgreTechnique.h>
+ #include <OgreTexture.h>
+ #include <OgreTextureManager.h>
+-#include <Overlay/OgreOverlay.h>
+-#include <Overlay/OgreOverlayManager.h>
+-#include <Overlay/OgrePanelOverlayElement.h>
++#include <OgreOverlay.h>
++#include <OgreOverlayManager.h>
++#include <OgrePanelOverlayElement.h>
+ 
+ #include <QtGlobal>
+ 

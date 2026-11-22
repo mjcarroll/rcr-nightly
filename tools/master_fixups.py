@@ -78,6 +78,29 @@ FIXUPS = {
          'ros_service(\n    name = "GetSubscribedTopics",\n    src = "GetSubscribedTopics.srv",\n)\n\nros_service(\n    name = "IsPaused",'),
         ("BUILD.bazel", '        "//srv:GetRate",\n', '        "//srv:GetRate",\n        "//srv:GetSubscribedTopics",\n'),
     ],
+    # New upstream overlay/tf_trajectory display and tool headers (their .cpp files were picked up by the
+    # reconciler, the headers were not). The ones with Q_OBJECT must also go through moc.
+    "rviz_default_plugins": [
+        ("BUILD.bazel", '\nHEADERS = [\n',
+         '\nHEADERS = [\n'
+         '    "include/rviz_default_plugins/displays/overlay/overlay_utils.hpp",\n'
+         '    "include/rviz_default_plugins/displays/overlay_camera/overlay_camera_display.hpp",\n'
+         '    "include/rviz_default_plugins/displays/overlay_image/overlay_image_display.hpp",\n'
+         '    "include/rviz_default_plugins/displays/tf_trajectory/tf_trajectory_display.hpp",\n'
+         '    "include/rviz_default_plugins/tools/overlay_picker/overlay_picker_tool.hpp",\n'),
+        ("BUILD.bazel", '\nMOC_HEADERS = [\n',
+         '\nMOC_HEADERS = [\n'
+         '    "include/rviz_default_plugins/displays/overlay_camera/overlay_camera_display.hpp",\n'
+         '    "include/rviz_default_plugins/displays/overlay_image/overlay_image_display.hpp",\n'
+         '    "include/rviz_default_plugins/displays/tf_trajectory/tf_trajectory_display.hpp",\n'
+         '    "include/rviz_default_plugins/tools/overlay_picker/overlay_picker_tool.hpp",\n'),
+        # Ogre's OgreUTFString.h needs the registry's libc++ char_traits<unsigned short> patch (same as
+        # rviz_2d_overlay_plugins / nav2_rviz_plugins).
+        ("BUILD.bazel",
+         '    hdrs = MOC_HEADERS + [h for h in HEADERS if h not in MOC_HEADERS],\n    includes = ["include"],\n',
+         '    hdrs = MOC_HEADERS + [h for h in HEADERS if h not in MOC_HEADERS],\n'
+         '    copts = [\n        "-include",\n        "char_traits_patch.h",\n    ],\n    includes = ["include"],\n'),
+    ],
     # Upstream merged rmw_fastrtps_shared_cpp into rmw_fastrtps_cpp (tracked in mjcarroll/ros-project-management#82):
     # drop the old module dependency, resolve merged `rmw_fastrtps_shared_cpp/...` includes from src/, and carry
     # over the old shared module's other dependencies.
