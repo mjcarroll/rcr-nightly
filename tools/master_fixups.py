@@ -36,6 +36,24 @@ FIXUPS = {
         '        requirement("argcomplete"),\n',
         '        requirement("argcomplete"),\n        requirement("colorama"),\n',
     )],
+    # Test files removed upstream on master (the overlays list them explicitly).
+    "rcpputils": [("test/BUILD.bazel", '    "test_endian",\n', '')],
+    "ament_index_cpp": [("test/BUILD.bazel", '    "utest_deprecated",\n', '')],
+    # chdir() needs <unistd.h>; libc++ no longer provides it transitively.
+    "libyaml_vendor": [(
+        "BUILD.bazel",
+        "    content = [\n        '__attribute__((constructor))",
+        "    content = [\n        '#include <unistd.h>',\n        '__attribute__((constructor))",
+    )],
+    # Upstream dropped src/manifest.cpp: PLUGINLIB_EXPORT_CLASS now lives in raw_publisher.cpp /
+    # raw_subscriber.cpp, which are part of the main library. Keep the plugins shared library as a shell.
+    "point_cloud_transport": [(
+        "BUILD.bazel",
+        'cc_shared_library(\n    name = "point_cloud_transport_plugins",',
+        'cc_library(\n    name = "point_cloud_transport_plugins_library",\n'
+        '    deps = PLUGIN_DEPENDENCIES.values(),\n)\n\n'
+        'cc_shared_library(\n    name = "point_cloud_transport_plugins",',
+    )],
     # Upstream merged rmw_fastrtps_shared_cpp into rmw_fastrtps_cpp (tracked in mjcarroll/ros-project-management#82):
     # drop the old module dependency, resolve merged `rmw_fastrtps_shared_cpp/...` includes from src/, and carry
     # over the old shared module's other dependencies.
