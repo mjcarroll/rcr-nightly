@@ -58,7 +58,8 @@ if [ ! -s $W/nightly-targets.txt ]; then echo "nothing to test"; exit 0; fi
 cd $W
 if [ "${NIGHTLY_RMW:-}" = "rmw_zenoh_cpp" ]; then
   # rmw_zenoh_cpp needs a router for discovery between processes (graph queries, endpoint counts, ...)
-  bazel build --config=ci @rmw_zenoh_cpp//:rmw_zenohd
+  # the ci config downloads no outputs (minimal): fetch the router binary and its runfiles
+  bazel build --config=ci --remote_download_toplevel @rmw_zenoh_cpp//:rmw_zenohd
   # the default config listens on tcp/[::]:7447 and exits if that fails (no IPv6 on some CI hosts)
   RCFG="$(bazel info --config=ci output_base 2>/dev/null)/external/rmw_zenoh_cpp+/config/DEFAULT_RMW_ZENOH_ROUTER_CONFIG.json5"
   sed 's|"tcp/\[::\]:7447"|"tcp/127.0.0.1:7447"|' "$RCFG" > "$HERE/zenoh_router.json5"
@@ -66,6 +67,6 @@ if [ "${NIGHTLY_RMW:-}" = "rmw_zenoh_cpp" ]; then
   ZENOHD=$!
   trap 'rc=$?; kill $ZENOHD 2>/dev/null; exit $rc' EXIT
   sleep 3
-  kill -0 $ZENOHD 2>/dev/null || { echo "== rmw_zenohd exited:"; tail -5 ../../zenohd.log; }
+  kill -0 $ZENOHD 2>/dev/null || { echo "== rmw_zenohd did not start:"; cat ../../zenohd.log; exit 1; }
 fi
 bazel test --config=ci --target_pattern_file=nightly-targets.txt --keep_going "$@"
