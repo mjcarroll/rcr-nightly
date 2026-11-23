@@ -29,11 +29,15 @@ fi
 if [ -z "${NO_LINT:-}" ]; then
   echo "local_path_override(module_name = \"rcr_lint\", path = \"$HERE/master-registry/rcr_lint\")" >> $W/MODULE.bazel
 fi
+# patches to @rosdistro (the RCR's shared Bazel rules): per-case pytest results, and optionally the slim ament_package
+RD=$(grep -o 'bazel_dep(name = "rosdistro", version = "[^"]*"' $W/MODULE.bazel | sed 's/.*version = "//; s/"$//')
+cp tools/rosdistro_patches/pytest_junitxml.patch $W/rosdistro_pytest_junitxml.patch
+RDP='"//:rosdistro_pytest_junitxml.patch"'
 if [ -n "${SLIM_ROSDISTRO:-}" ]; then
-  RD=$(grep -o 'bazel_dep(name = "rosdistro", version = "[^"]*"' $W/MODULE.bazel | sed 's/.*version = "//; s/"$//')
   cp tools/rosdistro_slim/slim_ament_package.patch $W/rosdistro_slim.patch
-  echo "single_version_override(module_name = \"rosdistro\", version = \"$RD\", patches = [\"//:rosdistro_slim.patch\"], patch_strip = 1)" >> $W/MODULE.bazel
+  RDP="$RDP, \"//:rosdistro_slim.patch\""
 fi
+echo "single_version_override(module_name = \"rosdistro\", version = \"$RD\", patches = [$RDP], patch_strip = 1)" >> $W/MODULE.bazel
 # the released-package patterns, plus the extra (unreleased) test modules
 tr ' ' '\n' < pkgs_ros2_repos.txt | sed '/^$/d; s|^|@|; s|$|//...|' | LC_ALL=C sort > $W/nightly-targets.txt
 for m in $(ls tools/extra_modules); do echo "@$m//..." >> $W/nightly-targets.txt; done

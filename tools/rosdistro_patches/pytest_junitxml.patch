@@ -1,0 +1,19 @@
+--- a/python/pytest_main.py	2026-11-23 13:51:20.417202972 -0600
++++ b/python/pytest_main.py	2026-11-23 13:51:20.428683394 -0600
+@@ -14,9 +14,15 @@
+ 
+ """Entry point for py_pytest targets: run pytest on the test files passed as arguments."""
+ 
++import os
+ import sys
+ 
+ import pytest
+ 
+ if __name__ == "__main__":
+-    sys.exit(pytest.main(sys.argv[1:]))
++    args = sys.argv[1:]
++    # rcr-nightly: write per-test-case results where Bazel looks for them (otherwise Bazel makes a one-case XML per target)
++    xml = os.environ.get("XML_OUTPUT_FILE")
++    if xml and not any(a.startswith("--junitxml") for a in args):
++        args = ["--junitxml=" + xml, "-o", "junit_family=xunit2"] + args
++    sys.exit(pytest.main(args))
