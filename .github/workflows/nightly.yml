@@ -11,8 +11,8 @@ on:
         description: 'Maximum number of test shards (jobs) per RMW'
         default: '12'
       rmws:
-        description: 'Space-separated RMW implementations to run the suite against (rmw_zenoh_cpp does not work yet: zenoh-c is too old for its config)'
-        default: 'rmw_fastrtps_cpp rmw_cyclonedds_cpp'
+        description: 'Space-separated RMW implementations to run the suite against'
+        default: 'rmw_fastrtps_cpp rmw_cyclonedds_cpp rmw_zenoh_cpp'
       slim:
         description: 'Slim @rosdistro//:ament_package (drop the undeclared opencv/Ogre/pip bundle from every package)'
         default: true
@@ -51,7 +51,7 @@ jobs:
       - id: plan
         env:
           MAX_SHARDS: ${{ inputs.max_shards || '12' }}
-          RMWS: ${{ inputs.rmws || 'rmw_fastrtps_cpp rmw_cyclonedds_cpp' }}
+          RMWS: ${{ inputs.rmws || 'rmw_fastrtps_cpp rmw_cyclonedds_cpp rmw_zenoh_cpp' }}
         run: |
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json, math, os

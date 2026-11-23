@@ -1,0 +1,4 @@
+# Module versions forced across the whole graph (appended to the workspace MODULE.bazel).
+# rmw_zenoh_cpp on master pins zenoh-c 1.10.1 (+fixes); the RCR release builds 1.8.0 from bcr_staging.
+single_version_override(module_name = "zenoh-c", version = "1.10.1.bcr.1")
+single_version_override(module_name = "zenoh-cpp", version = "1.10.1")

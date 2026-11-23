@@ -7,6 +7,7 @@
 #      SKIP_GENERATE=1    reuse an existing master-registry/ (e.g. downloaded from the prepare job)
 #      SINCE_HOURS=N      only test what changed on the tracked branches in the last N hours (+ everything
 #                         downstream of it): writes the affected test targets to nightly-targets.txt
+#      NO_PINS=1          do not force the module versions in tools/version_pins.bazel (zenoh-c / zenoh-cpp 1.10.1)
 #      NO_LINT=1          do not add the ament_lint_auto lint tests (copyright/cpplint/lint_cmake/uncrustify/xmllint)
 #      SLIM_ROSDISTRO=1   patch @rosdistro//:ament_package to not bundle every third-party lib / pip wheel
 #                         (cuts the target graph ~40%, actions ~57%; for flake hunts, not the faithful nightly)
@@ -23,6 +24,7 @@ if [ -z "${SKIP_GENERATE:-}" ]; then
   python3 -u tools/make_bcr_bump.py --out master-registry >> gen_all.log 2>&1
 fi
 (cat $W/MODULE.bazel.orig; echo; echo "# --- extra (unreleased) modules ---"; cat master-registry/extra_deps.bazel; echo; echo "# --- master overrides ---"; cat master-registry/overrides.bazel) > $W/MODULE.bazel
+[ -n "${NO_PINS:-}" ] || cat tools/version_pins.bazel >> $W/MODULE.bazel
 if [ -z "${NO_LINT:-}" ]; then
   echo "local_path_override(module_name = \"rcr_lint\", path = \"$HERE/master-registry/rcr_lint\")" >> $W/MODULE.bazel
 fi
