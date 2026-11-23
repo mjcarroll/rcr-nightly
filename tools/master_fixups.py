@@ -36,6 +36,24 @@ FIXUPS = {
         '        requirement("argcomplete"),\n',
         '        requirement("argcomplete"),\n        requirement("colorama"),\n',
     )],
+    # The test imports ament_mypy (-> mypy); the overlay does not declare it.
+    "camera_info_manager_py": [(
+        "test/BUILD.bazel",
+        '    deps = ["//:camera_info_manager_py"],',
+        '    deps = [\n        "//:camera_info_manager_py",\n        "@ament_mypy",\n    ],',
+    )],
+    # Upstream links every message_filters gtest into one binary with test_main.cpp (which calls rclcpp::init).
+    # The overlay builds one binary per file with the plain gtest main, so this test, which creates a Node,
+    # fails with "context argument is null". Give it its own target with test_main.cpp.
+    "message_filters": [
+        ("test/BUILD.bazel", '    "message_filters-test_time_sequencer": "time_sequencer_unittest.cpp",\n', ''),
+        ("test/BUILD.bazel", 'cc_test(\n    name = "message_filters-test_fuzz",',
+         'cc_test(\n    name = "message_filters-test_time_sequencer",\n'
+         '    srcs = [\n        "test_main.cpp",\n        "time_sequencer_unittest.cpp",\n    ],\n'
+         '    dynamic_deps = ["//:transitive_dynamic_deps"],\n'
+         '    deps = TEST_DEPENDENCIES.values() + [\n        "@rosdistro//cc:googletest",\n    ],\n)\n\n'
+         'cc_test(\n    name = "message_filters-test_fuzz",'),
+    ],
     # Test files removed upstream on master (the overlays list them explicitly).
     "rcpputils": [("test/BUILD.bazel", '    "test_endian",\n', '')],
     "ament_index_cpp": [("test/BUILD.bazel", '    "utest_deprecated",\n', '')],
@@ -121,6 +139,7 @@ FIXUPS = {
 
 # MODULE.bazel edits: (old module dep to drop, new module deps to add), versions come from the workspace pins.
 MODULE_FIXUPS = {
+    "camera_info_manager_py": ([], ["ament_mypy"]),
     "rmw_fastrtps_cpp": (["rmw_fastrtps_shared_cpp"],
                          ["rmw_security_common", "rosidl_typesupport_introspection_c", "rosidl_typesupport_introspection_cpp"]),
 }

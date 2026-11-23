@@ -42,7 +42,10 @@ def main():
             continue
         res[label] = [[tc.get("classname", ""), tc.get("name", ""), status(tc)]
                       for tc in tree.iter("testcase")]
-        if logdir and any(c[2] == "FAILED" for c in res[label]) and "test.log" in files:
+        # keep the log of anything that did not pass, including tests that died before writing a case
+        broken = not res[label] or any(c[2] == "FAILED" for c in res[label]) or any(
+            int(ts.get("failures", 0)) or int(ts.get("errors", 0)) for ts in tree.iter("testsuite"))
+        if logdir and broken and "test.log" in files:
             os.makedirs(logdir, exist_ok=True)
             shutil.copy(os.path.join(dirpath, "test.log"), os.path.join(logdir, label.replace("/", "__") + ".log"))
     json.dump(res, open(out, "w"), separators=(",", ":"))
