@@ -1,0 +1,38 @@
+--- a/test/test_convert_round_trip.py
++++ b/test/test_convert_round_trip.py
+@@ -114,28 +114,14 @@
+     """
+     Look up one of the conversion capsules of a message type.
+ 
+-    ``__import_type_support__()`` cannot be used here. It runs
+-    ``from rosidl_generator_py import import_type_support``, but the test interfaces
+-    of this package are generated into a Python package that is *also* called
+-    ``rosidl_generator_py`` and shadows the generator package on ``sys.path``. The
+-    generated helper swallows the resulting ImportError and leaves the capsules
+-    unset, so the typesupport extension module is imported directly instead, the
+-    same way ``rosidl_generator_py.import_type_support`` would.
++    rcr-nightly: the CMake build has one typesupport extension per package that this test imported directly; the
++    Bazel build has one per message, which the generated class already imports and keeps in
++    _CREATE_ROS_MESSAGE, _CONVERT_FROM_PY, etc.
+     """
+-    package, *middle, module = message_type.__module__.split('.')
+-    typesupport_dir = os.getenv(
+-        'ROSIDL_GENERATOR_PY_TYPESUPPORT_DIR', '').strip(os.pathsep)
+-    if typesupport_dir:
+-        package_path = importlib.import_module(package).__path__
+-        if typesupport_dir not in package_path:
+-            package_path.append(typesupport_dir)
+-    suffix = '__'.join(middle + [module[1:]])
+-    # Python 3.8+ on Windows does not use PATH to find the DLLs the extension
+-    # module depends on, so add them explicitly the way import_type_support does.
+-    with add_dll_directories_from_env('PATH'):
+-        typesupport = importlib.import_module(
+-            '.{}_s__rosidl_typesupport_c'.format(package), package=package)
+-    return getattr(typesupport, '{}_msg__{}'.format(function, suffix))
++    attribute = '_' + function.upper()
++    if getattr(message_type, attribute, None) is None:
++        message_type.__import_type_support__()
++    return getattr(message_type, attribute)
+ 
+ 
+ def _round_trip(message: Any) -> Any:

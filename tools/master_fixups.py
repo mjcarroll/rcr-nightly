@@ -49,6 +49,11 @@ FIXUPS = {
          'genrule(\n    name = "grammar_cache",\n    outs = ["rosidl_parser/grammar.lark.bin"],\n'
          '    cmd = "$(location :generate_grammar_cache) --output $@",\n    tools = [":generate_grammar_cache"],\n)\n'),
     ],
+    # test_cli_extension.py does not use test_convert_round_trip.py, which imports the generated test messages that
+    # this target does not depend on (the overlay bundled the file into it).
+    "rosidl_generator_py": [
+        ("test/BUILD.bazel", '        "test_cli_extension.py",\n        "test_convert_round_trip.py",\n', '        "test_cli_extension.py",\n'),
+    ],
     # cli.py imports argcomplete, which mypy must be able to resolve; the lint targets only depend on @ament_<linter>.
     "ament_index_python": [
         ("BUILD.bazel", 'load("@rosdistro//python:defs.bzl", "py_pytest")\n',
