@@ -14,6 +14,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from reconcile_overlay import reconcile_overlay, reconcile_deps
 from master_fixups import apply_fixups, apply_module_fixups
+from add_lint import add_lint, write_module as write_lint_module
 from rebase_patch import rebase_patch
 
 CACHE = Path(os.environ.get("MM_CACHE", "/tmp/mm_cache")); CACHE.mkdir(parents=True, exist_ok=True)
@@ -113,6 +114,9 @@ def main():
         pkg_xml = (work / "package.xml").read_text() if (work / "package.xml").exists() else ""
         text, deprep = reconcile_deps(mod / "overlay", pkg_xml, base_pkg_xml, text, ws, Path(a.rcr).resolve() / "modules")
         text = apply_module_fixups(pkg, text, ws)
+        if not os.environ.get("NO_LINT"):
+            text, lints = add_lint(pkg, mod / "overlay", work, text, ws)
+            rec["_lint"] = lints
         rec["_deps"] = deprep
         for rel in ov:
             ov[rel] = sri(mod / "overlay" / rel)
@@ -132,7 +136,7 @@ def main():
         print(f"{pkg}: {newver}  patches {len(applied)}/{len(src_in.get('patches', {}))} apply (rebased: {[k for k, v in rebased.items() if v in ('3-way', 'hand')]}); failed: {failed}")
         print("  deps:", rec.get("_deps"))
         for f, r in rec.items():
-            if f in ("_deps", "_bzl_renames", "_fixups"): continue
+            if f in ("_deps", "_bzl_renames", "_fixups", "_lint"): continue
             print(f"  overlay {f}: -{len(r['removed'])} +{len(r['added'])} new_tests={len(r['new_tests'])} rules_removed={r['removed_rules']} unplaced={r['unplaced']}")
         shutil.rmtree(tmp)
     for pkg in a.pkgs:
@@ -142,6 +146,7 @@ def main():
             report[pkg] = {"error": f"{type(e).__name__}: {e}"}
             print(f"{pkg}: ERROR {type(e).__name__}: {e}", flush=True)
     out.mkdir(parents=True, exist_ok=True)
+    write_lint_module(out, ws)
     json.dump({"mirrors": []}, open(out / "bazel_registry.json", "w"))
     prev = json.load(open(out / "patch_report.json")) if (out / "patch_report.json").exists() else {}
     prev.update(report); json.dump(prev, open(out / "patch_report.json", "w"), indent=1)
