@@ -7,7 +7,6 @@
 @ament_xmllint//:test_xmllint *
 @camera_info_manager_py//test:test_zoom_camera_info_manager *
 @image_tools//:test_uncrustify rmw_fastrtps_cpp,rmw_zenoh_cpp
-@message_filters//test:message_filters-test_time_sequencer *
 @python_qt_binding//test:python_qt_binding *
 @qt_dotgraph//test:dot_to_qt_test *
 @rcl_action//test:test_action_communication rmw_fastrtps_cpp
