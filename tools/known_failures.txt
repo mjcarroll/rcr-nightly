@@ -3,7 +3,6 @@
 # Seeded from runs 45227944191 (fastrtps), 45236228949 (zenoh) and 45214605197 (cyclonedds).
 @ament_clang_tidy//:test_flake8 *
 @ament_index_python//:test_mypy *
-@ament_index_python//test:test_ament_index_python *
 @ament_xmllint//:test_xmllint *
 @camera_info_manager_py//test:test_zoom_camera_info_manager *
 @image_tools//:test_uncrustify rmw_fastrtps_cpp,rmw_zenoh_cpp

@@ -1,0 +1,28 @@
+--- a/test/test_ament_index_python.py
++++ b/test/test_ament_index_python.py
+@@ -14,6 +14,7 @@
+ 
+ from argparse import Namespace
+ import os
++import sys
+ from pathlib import Path, PurePath
+ 
+ from _pytest.capture import CaptureFixture
+@@ -37,6 +38,17 @@
+ import pytest
+ 
+ 
++@pytest.fixture(autouse=True)
++def _bazel_isolation(monkeypatch, tmp_path):
++    # rcr-nightly: under Bazel the RCR search_paths patch falls back to the runfiles dir when AMENT_PREFIX_PATH is
++    # empty (so the OSError these tests expect never comes), and the pytest wrapper leaves its arguments in sys.argv
++    # (which cli.main() parses).
++    monkeypatch.delenv('RUNFILES_DIR', raising=False)
++    monkeypatch.delenv('TEST_WORKSPACE', raising=False)
++    monkeypatch.setattr(Path, 'cwd', classmethod(lambda cls: tmp_path))
++    monkeypatch.setattr(sys, 'argv', sys.argv[:1])
++
++
+ def set_ament_prefix_path(subfolders: list[str]) -> None:
+     paths = []
+     base_path = Path(__file__).parent
