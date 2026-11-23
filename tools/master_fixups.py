@@ -36,6 +36,19 @@ FIXUPS = {
         '        requirement("argcomplete"),\n',
         '        requirement("argcomplete"),\n        requirement("colorama"),\n',
     )],
+    # Master's rosidl_parser looks for a pre-compiled grammar.lark.bin that CMake generates at build time; the overlay
+    # never produced it, so test_grammar_cache_* fail and every parse compiles the grammar from scratch.
+    "rosidl_parser": [
+        ("BUILD.bazel", 'load("@rules_python//python:defs.bzl", "py_library")\n',
+         'load("@rules_python//python:defs.bzl", "py_binary", "py_library")\n'),
+        ("BUILD.bazel", '        "rosidl_parser/grammar.lark",\n        "rosidl_parser/py.typed",\n    ],\n    deps = [requirement("lark")],\n)\n',
+         '        "rosidl_parser/grammar.lark",\n        "rosidl_parser/py.typed",\n        ":grammar_cache",\n    ],\n    deps = [requirement("lark")],\n)\n\n'
+         'py_binary(\n    name = "generate_grammar_cache",\n    srcs = ["rosidl_parser/generate_grammar_cache.py"],\n'
+         '    data = ["rosidl_parser/grammar.lark"],\n    main = "rosidl_parser/generate_grammar_cache.py",\n'
+         '    deps = [requirement("lark")],\n)\n\n'
+         'genrule(\n    name = "grammar_cache",\n    outs = ["rosidl_parser/grammar.lark.bin"],\n'
+         '    cmd = "$(location :generate_grammar_cache) --output $@",\n    tools = [":generate_grammar_cache"],\n)\n'),
+    ],
     # cli.py imports argcomplete, which mypy must be able to resolve; the lint targets only depend on @ament_<linter>.
     "ament_index_python": [
         ("BUILD.bazel", 'load("@rosdistro//python:defs.bzl", "py_pytest")\n',

@@ -14,7 +14,6 @@
 @rosidl_generator_py//test:test_cli_extension *
 @rosidl_generator_py//test:test_interfaces_py *
 @rosidl_generator_py//test:test_property_py *
-@rosidl_parser//test:pytest *
 @rqt_graph//test:dotcode_test *
 @rqt_plot//test:test_get_plot_fields *
 @rqt_py_common//test:rqt_py_common *
