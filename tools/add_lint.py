@@ -27,6 +27,25 @@ def _cmake(work):
     return re.sub(r"(?m)#.*$", "", cm.read_text()) if cm.exists() else ""
 
 
+_EXTS = {
+    "cpplint": (".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx"),
+    "uncrustify": (".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx"),
+    "copyright": (".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx", ".py", ".cmake"),
+    "lint_cmake": (".cmake",),
+    "xmllint": (".xml",),
+}
+
+
+def _has_files(work, linter):
+    """The linters fail with 'No files found' when there is nothing to look at."""
+    for f in Path(work).rglob("*"):
+        if not f.is_file():
+            continue
+        if f.name.endswith(_EXTS[linter]) or (linter in ("lint_cmake", "copyright") and f.name == "CMakeLists.txt"):
+            return True
+    return False
+
+
 def linters_for(work):
     cm = _cmake(work)
     if "ament_lint_auto_find_test_dependencies" not in cm:
@@ -37,7 +56,7 @@ def linters_for(work):
     for m in re.finditer(r"(?:list\s*\(\s*APPEND|set\s*\()\s*AMENT_LINT_AUTO_EXCLUDE([^)]*)\)", cm):
         skipped |= set(re.findall(r"ament_cmake_(\w+)", m.group(1)))
     skipped |= set(re.findall(r"set\s*\(\s*ament_cmake_(\w+)_FOUND\s+TRUE", cm))
-    return [l for l in ls if l not in skipped]
+    return [l for l in ls if l not in skipped and _has_files(work, l)]
 
 
 def add_lint(pkg, overlay, work, text, ws_text):
@@ -55,7 +74,16 @@ def add_lint(pkg, overlay, work, text, ws_text):
     ov_only = sorted(set(patched) | set(EXTRA_EXCLUDE.get(pkg, [])) | set(str(p.relative_to(overlay)) for p in Path(overlay).rglob("*")
                      if p.is_file() and not (Path(work) / p.relative_to(overlay)).exists()
                      and p.name not in ("BUILD.bazel", "LICENSE")))
-    call = f"\n\nament_lint_tests(\n    linters = {json.dumps(ls)},\n    exclude = {json.dumps(ov_only)},\n)\n"
+    # globs stop at package boundaries: every subdirectory with its own BUILD file exports its lintable files
+    subs = sorted(str(b.parent.relative_to(overlay)) for b in Path(overlay).rglob("BUILD.bazel") if b.parent != Path(overlay))
+    for d in subs:
+        sb = Path(overlay) / d / "BUILD.bazel"
+        sub_ex = [e[len(d) + 1:] for e in ov_only if e.startswith(d + "/")]
+        sb.write_text('load("@rcr_lint//:defs.bzl", "ament_lint_files")\n' + sb.read_text().rstrip("\n")
+                      + f"\n\nament_lint_files(exclude = {json.dumps(sub_ex)})\n")
+    root_ex = [e for e in ov_only if not any(e.startswith(d + "/") for d in subs)]
+    call = (f"\n\nament_lint_tests(\n    linters = {json.dumps(ls)},\n    exclude = {json.dumps(root_ex)},\n"
+            f"    subpackages = {json.dumps(subs)},\n)\n")
     build.write_text(LOAD + body.rstrip("\n") + call)
     deps = ["rcr_lint"] + [f"ament_{l}" for l in ls]
     for d in deps:

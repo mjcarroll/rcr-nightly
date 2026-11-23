@@ -12,14 +12,24 @@ _FILES = {
     "xmllint": ["**/*.xml"],
 }
 
-def ament_lint_tests(linters, exclude = []):
+_ALL = {f: None for fs in _FILES.values() for f in fs}.keys()
+
+def ament_lint_files(exclude = []):
+    """In a subpackage (its own BUILD file): hand its lintable files to the package's lint tests."""
+    native.filegroup(
+        name = "lint_files",
+        srcs = native.glob(list(_ALL), exclude = exclude, allow_empty = True),
+        visibility = ["//visibility:public"],
+    )
+
+def ament_lint_tests(linters, exclude = [], subpackages = []):
     """Defines test_<linter> for each linter that has files to look at and no test of that name yet."""
     for linter in linters:
         name = "test_" + linter
         if native.existing_rule(name):
             continue
         files = native.glob(_FILES[linter], exclude = exclude, allow_empty = True)
-        if not files:
+        if not files and not subpackages:
             continue
         tool = "@ament_%s//:cli" % linter
         native.genrule(
@@ -33,7 +43,7 @@ def ament_lint_tests(linters, exclude = []):
             srcs = [name + "_main.py"],
             main = name + "_main.py",
             args = ["$(rlocationpath %s)" % tool, "$(rlocationpath package.xml)"],
-            data = files + [f for f in ["package.xml"] if f not in files] + [tool],
+            data = files + [f for f in ["package.xml"] if f not in files] + ["//%s:lint_files" % d for d in subpackages] + [tool],
             deps = ["@rules_python//python/runfiles"],
             size = "small",
         )
