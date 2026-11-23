@@ -45,5 +45,6 @@ def ament_lint_tests(linters, exclude = [], subpackages = []):
             args = ["$(rlocationpath %s)" % tool, "$(rlocationpath package.xml)"],
             data = files + [f for f in ["package.xml"] if f not in files] + ["//%s:lint_files" % d for d in subpackages] + [tool],
             deps = ["@rules_python//python/runfiles"],
-            size = "small",
+            size = "medium",
+            tags = ["lint"],
         )

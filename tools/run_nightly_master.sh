@@ -7,6 +7,7 @@
 #      SKIP_GENERATE=1    reuse an existing master-registry/ (e.g. downloaded from the prepare job)
 #      SINCE_HOURS=N      only test what changed on the tracked branches in the last N hours (+ everything
 #                         downstream of it): writes the affected test targets to nightly-targets.txt
+#      NIGHTLY_RMW=r      the RMW the tests run against; rmw_zenoh_cpp also starts the router it needs
 #      NO_PINS=1          do not force the module versions in tools/version_pins.bazel (zenoh-c / zenoh-cpp 1.10.1)
 #      NO_LINT=1          do not add the ament_lint_auto lint tests (copyright/cpplint/lint_cmake/uncrustify/xmllint)
 #      SLIM_ROSDISTRO=1   patch @rosdistro//:ament_package to not bundle every third-party lib / pip wheel
@@ -55,4 +56,12 @@ fi
 [ -z "${GENERATE_ONLY:-}" ] || exit 0
 if [ ! -s $W/nightly-targets.txt ]; then echo "nothing to test"; exit 0; fi
 cd $W
+if [ "${NIGHTLY_RMW:-}" = "rmw_zenoh_cpp" ]; then
+  # rmw_zenoh_cpp needs a router for discovery between processes (graph queries, endpoint counts, ...)
+  bazel build --config=ci @rmw_zenoh_cpp//:rmw_zenohd
+  RMW_IMPLEMENTATION=rmw_zenoh_cpp setsid bazel-bin/external/rmw_zenoh_cpp+/rmw_zenohd > ../../zenohd.log 2>&1 &
+  ZENOHD=$!
+  trap 'rc=$?; kill $ZENOHD 2>/dev/null; exit $rc' EXIT
+  sleep 3
+fi
 bazel test --config=ci --target_pattern_file=nightly-targets.txt --keep_going "$@"

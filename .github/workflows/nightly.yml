@@ -59,7 +59,9 @@ jobs:
           full = os.environ.get('SINCE_HOURS', '0') == '0'
           per = 30 if full else 80   # full list is package patterns, the selected list is test targets
           k = 0 if n == 0 else max(1, min(int(os.environ['MAX_SHARDS']), math.ceil(n / per)))
-          inc = [{'shard': i, 'rmw': r} for r in os.environ['RMWS'].split() for i in range(k)]
+          rmws = os.environ['RMWS'].split()
+          # the lint tests do not depend on the RMW: run them with the first one only
+          inc = [{'shard': i, 'rmw': r, 'lint': r == rmws[0]} for r in rmws for i in range(k)]
           print(f"count={n}\nshards={k}\nmatrix={json.dumps(inc)}")
           PY
           echo "### Plan" >> "$GITHUB_STEP_SUMMARY"
@@ -103,13 +105,14 @@ jobs:
       - name: Test shard ${{ matrix.shard }}/${{ needs.prepare.outputs.shards }} (${{ matrix.rmw }})
         env:
           SINCE_HOURS: ''  # selection already done in prepare
+          NIGHTLY_RMW: ${{ matrix.rmw }}
         run: |
           set -o pipefail
           ci/setup.sh
           mv prepared/master-registry .
           SKIP_GENERATE=1 NIGHTLY_TARGETS=prepared/ros-central-registry/workspace/nightly-targets.txt \
             NIGHTLY_SHARD=${{ matrix.shard }}/${{ needs.prepare.outputs.shards }} \
-            tools/run_nightly_master.sh --test_output=errors --nocache_test_results --jobs=128 --test_env=RMW_IMPLEMENTATION=${{ matrix.rmw }} 2>&1 | tee nightly.log || true
+            tools/run_nightly_master.sh --test_output=errors --nocache_test_results --jobs=128 --test_env=RMW_IMPLEMENTATION=${{ matrix.rmw }} ${{ matrix.lint && '' || '--test_tag_filters=-lint' }} 2>&1 | tee nightly.log || true
       - name: Summarize
         if: always()
         run: |
