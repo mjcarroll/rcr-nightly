@@ -1,6 +1,6 @@
 """Collect per-testcase results from bazel-testlogs test.xml files.
 
-usage: collect_cases.py <testlogs-dir> out.json
+usage: collect_cases.py <testlogs-dir> out.json [failed-logs-dir]
 
 Output: {"<repo>//<pkg>:<target>": [[classname, name, status], ...]}
 status is PASSED / FAILED / SKIPPED. Targets whose xml has no <testcase>
@@ -8,6 +8,7 @@ status is PASSED / FAILED / SKIPPED. Targets whose xml has no <testcase>
 """
 import json
 import os
+import shutil
 import sys
 import xml.etree.ElementTree as ET
 
@@ -22,6 +23,7 @@ def status(tc):
 
 def main():
     root, out = sys.argv[1], sys.argv[2]
+    logdir = sys.argv[3] if len(sys.argv) > 3 else None
     res = {}
     for dirpath, _, files in os.walk(root, followlinks=False):
         if "test.xml" not in files:
@@ -40,6 +42,9 @@ def main():
             continue
         res[label] = [[tc.get("classname", ""), tc.get("name", ""), status(tc)]
                       for tc in tree.iter("testcase")]
+        if logdir and any(c[2] == "FAILED" for c in res[label]) and "test.log" in files:
+            os.makedirs(logdir, exist_ok=True)
+            shutil.copy(os.path.join(dirpath, "test.log"), os.path.join(logdir, label.replace("/", "__") + ".log"))
     json.dump(res, open(out, "w"), separators=(",", ":"))
     n = sum(len(v) for v in res.values() if v)
     print(f"collected {n} cases from {len(res)} targets "

@@ -112,7 +112,7 @@ jobs:
           mv prepared/master-registry .
           SKIP_GENERATE=1 NIGHTLY_TARGETS=prepared/ros-central-registry/workspace/nightly-targets.txt \
             NIGHTLY_SHARD=${{ matrix.shard }}/${{ needs.prepare.outputs.shards }} \
-            tools/run_nightly_master.sh --test_output=errors --nocache_test_results --jobs=128 --test_env=RMW_IMPLEMENTATION=${{ matrix.rmw }} ${{ matrix.lint && '' || '--test_tag_filters=-lint' }} 2>&1 | tee nightly.log || true
+            tools/run_nightly_master.sh --test_output=errors --nocache_test_results --jobs=128 --test_env=RMW_IMPLEMENTATION=${{ matrix.rmw }} ${{ !matrix.lint && '--test_tag_filters=-lint' || '' }} 2>&1 | tee nightly.log || true
       - name: Summarize
         if: always()
         run: |
@@ -120,7 +120,7 @@ jobs:
       - name: Collect per-case results
         if: always()
         run: |
-          python3 tools/collect_cases.py ros-central-registry/workspace/bazel-testlogs/. cases-${{ matrix.rmw }}-${{ matrix.shard }}.json
+          python3 tools/collect_cases.py ros-central-registry/workspace/bazel-testlogs/. cases-${{ matrix.rmw }}-${{ matrix.shard }}.json failed-logs-${{ matrix.rmw }}-${{ matrix.shard }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -129,6 +129,8 @@ jobs:
             nightly.log
             summary-${{ matrix.rmw }}-${{ matrix.shard }}.json
             cases-${{ matrix.rmw }}-${{ matrix.shard }}.json
+            failed-logs-${{ matrix.rmw }}-${{ matrix.shard }}
+            zenohd.log
 
   report:
     needs: [prepare, test]
