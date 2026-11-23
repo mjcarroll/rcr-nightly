@@ -36,6 +36,13 @@ FIXUPS = {
         '        requirement("argcomplete"),\n',
         '        requirement("argcomplete"),\n        requirement("colorama"),\n',
     )],
+    # cli.py imports argcomplete, which mypy must be able to resolve; the lint targets only depend on @ament_<linter>.
+    "ament_index_python": [
+        ("BUILD.bazel", 'load("@rosdistro//python:defs.bzl", "py_pytest")\n',
+         'load("@pip_ros//:requirements.bzl", "requirement")\nload("@rosdistro//python:defs.bzl", "py_pytest")\n'),
+        ("BUILD.bazel", '    deps = ["@ament_{0}".format(linter)],\n',
+         '    deps = ["@ament_{0}".format(linter)] + ([requirement("argcomplete")] if linter == "mypy" else []),\n'),
+    ],
     # The test imports ament_mypy (-> mypy); the overlay does not declare it.
     "camera_info_manager_py": [(
         "test/BUILD.bazel",
