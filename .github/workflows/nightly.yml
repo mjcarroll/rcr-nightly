@@ -11,15 +11,15 @@ on:
         description: 'Maximum number of test shards (jobs)'
         default: '12'
       slim:
-        description: 'Slim @rosdistro//:ament_package (smaller build graph; not the stock RCR environment)'
-        default: false
+        description: 'Slim @rosdistro//:ament_package (drop the undeclared opencv/Ogre/pip bundle from every package)'
+        default: true
         type: boolean
 
 env:
   GH_TOKEN: ${{ github.token }}  # tools resolve master SHAs / recent commits with `gh api`
   MM_CACHE: ${{ github.workspace }}/.mm_cache
   SINCE_HOURS: ${{ inputs.since_hours || '0' }}
-  SLIM_ROSDISTRO: ${{ inputs.slim && '1' || '' }}
+  SLIM_ROSDISTRO: ${{ (github.event_name == 'schedule' || inputs.slim) && '1' || '' }}
 
 jobs:
   prepare:
