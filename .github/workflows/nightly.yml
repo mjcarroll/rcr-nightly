@@ -109,6 +109,10 @@ jobs:
         if: always()
         run: |
           python3 tools/summarize_nightly.py nightly.log --json summary-${{ matrix.shard }}.json | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Collect per-case results
+        if: always()
+        run: |
+          python3 tools/collect_cases.py ros-central-registry/workspace/bazel-testlogs/. cases-${{ matrix.shard }}.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -116,6 +120,7 @@ jobs:
           path: |
             nightly.log
             summary-${{ matrix.shard }}.json
+            cases-${{ matrix.shard }}.json
 
   report:
     needs: [prepare, test]
