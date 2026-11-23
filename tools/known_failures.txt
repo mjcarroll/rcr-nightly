@@ -1,0 +1,33 @@
+# Targets known to fail: `<target> <rmw>[,<rmw>...]|*`. The nightly report fails only on failures that are not listed here,
+# and lists entries that now pass so they can be removed. FLAKY results never fail the report.
+# Seeded from runs 45227944191 (fastrtps), 45236228949 (zenoh) and 45214605197 (cyclonedds).
+@ament_clang_tidy//:test_flake8 *
+@ament_index_python//:test_mypy *
+@ament_index_python//test:test_ament_index_python *
+@ament_xmllint//:test_xmllint *
+@camera_info_manager_py//test:test_zoom_camera_info_manager *
+@image_tools//:test_uncrustify rmw_fastrtps_cpp,rmw_zenoh_cpp
+@message_filters//test:message_filters-test_time_sequencer *
+@python_qt_binding//test:python_qt_binding *
+@qt_dotgraph//test:dot_to_qt_test *
+@rcl_action//test:test_action_communication rmw_fastrtps_cpp
+@rclcpp//test:test_time *
+@ros2topic//test:test_echo_pub rmw_cyclonedds_cpp
+@rosbag2_storage_mcap//:test_cpplint rmw_fastrtps_cpp,rmw_zenoh_cpp
+@rosidl_generator_py//test:test_cli_extension *
+@rosidl_generator_py//test:test_interfaces_py *
+@rosidl_generator_py//test:test_property_py *
+@rosidl_parser//test:pytest *
+@rqt_graph//test:dotcode_test *
+@rqt_plot//test:test_get_plot_fields *
+@rqt_py_common//test:rqt_py_common *
+@rqt_reconfigure//test:test_text_filter *
+@rqt_reconfigure//test:test_treenode_qstditem *
+@rqt_topic//test:test_message *
+@rqt_topic//test:test_message_detail *
+@rqt_topic//test:test_message_list *
+@rqt_topic//test:test_topic *
+@rqt_topic//test:test_topic_list *
+@rviz_common//:frame_manager_test *
+@rviz_default_plugins//test:get_transport_from_topic_test *
+@rviz_rendering//test:string_helper_test *

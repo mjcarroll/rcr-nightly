@@ -137,35 +137,15 @@ jobs:
     if: always() && needs.prepare.result == 'success'
     runs-on: ubuntu-24.04
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           pattern: shard-*
           merge-multiple: true
+      - name: Shard jobs ok
+        if: needs.test.result == 'failure' || needs.test.result == 'cancelled'
+        run: echo "a test shard job did not complete (result ${{ needs.test.result }})"; exit 1
       - name: Merge summaries
-        run: |
-          python3 - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
-          import glob, json, collections, re
-          res = collections.defaultdict(dict)   # rmw -> target -> status
-          build = collections.defaultdict(list)
-          for f in sorted(glob.glob('summary-*.json')):
-              rmw = re.match(r'summary-(.+)-\d+\.json', f).group(1)
-              d = json.load(open(f))
-              res[rmw].update(d['tests'])
-              build[rmw] += d.get('build_errors', [])
-          print('## Nightly\n')
-          ok = ('PASSED', 'SKIPPED')
-          bad = {r: {t for t, s in ts.items() if s not in ok} for r, ts in res.items()}
-          for r, ts in sorted(res.items()):
-              c = collections.Counter(ts.values())
-              print(f'- **{r}**: ' + ', '.join(f'{k}: {v}' for k, v in sorted(c.items())) + f', build errors: {len(build[r])}')
-          if not res: print('nothing to test (no changes in the window) or no summaries')
-          allbad = set().union(*bad.values()) if bad else set()
-          common = set.intersection(*bad.values()) if bad else set()
-          print('\n### Fails on every RMW\n')
-          for t in sorted(common): print(f'- `{t}`')
-          print('\n### RMW-specific failures\n')
-          for t in sorted(allbad - common):
-              print(f'- `{t}`: fails on ' + ', '.join(sorted(r for r in bad if t in bad[r])))
-          for r in build:
-              for e in build[r]: print(f'- BUILD ({r}) {e}')
-          PY
+        if: always()
+        # fails on failures that are not in tools/known_failures.txt (and on build errors)
+        run: python3 tools/report_nightly.py . | tee -a "$GITHUB_STEP_SUMMARY"; exit ${PIPESTATUS[0]}
