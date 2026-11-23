@@ -35,7 +35,7 @@ if [ -n "${SINCE_HOURS:-}" ]; then
   python3 tools/changed_since.py --hours "$SINCE_HOURS" > $W/changed.txt
   if [ -s $W/changed.txt ]; then
     U=$(paste -sd+ $W/nightly-targets.txt | sed 's/+/ + /g'); C=$(sed 's|^|@|; s|$|//...|' $W/changed.txt | paste -sd+ | sed 's/+/ + /g')
-    (cd $W && bazel query "tests(rdeps($U, $C))" --config=ci --keep_going --noimplicit_deps 2>/dev/null | LC_ALL=C sort > nightly-targets.affected) || true
+    (cd $W && bazel query "let t = tests(rdeps($U, $C)) in \$t except attr(tags, \"\\bmanual\\b\", \$t)" --config=ci --keep_going --noimplicit_deps 2>/dev/null | LC_ALL=C sort > nightly-targets.affected) || true
     mv $W/nightly-targets.affected $W/nightly-targets.txt
   else
     : > $W/nightly-targets.txt
