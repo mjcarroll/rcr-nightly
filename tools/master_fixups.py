@@ -97,11 +97,12 @@ FIXUPS = {
         '    deps = PLUGIN_DEPENDENCIES.values(),\n)\n\n'
         'cc_shared_library(\n    name = "point_cloud_transport_plugins",',
     )],
-    # The reconciler appended the two new upstream gtest sources to every sibling srcs list (the plugin
+    # The reconciler appended the new upstream gtest sources to every sibling srcs list (the plugin
     # libraries included). Remove them there and give each its own cc_test (CMake: ament_add_gtest).
     "class_loader": [
         ("test/BUILD.bazel", '        "external_load_test.cpp",\n', ''),
         ("test/BUILD.bazel", '        "unmanaged_test.cpp",\n', ''),
+        ("test/BUILD.bazel", '        "multi_library_exit_test.cpp",\n', ''),
         ("test/BUILD.bazel",
          'cc_test(\n    name = "class_loader_utest",',
          '[cc_test(\n'
@@ -110,7 +111,7 @@ FIXUPS = {
          '    data = [\n        ":ament_index_class_loader_utest",\n    ],\n'
          '    dynamic_deps = ["//:transitive_dynamic_deps"],\n'
          '    deps = DEPENDENCIES.values() + [\n        "//:class_loader_library",\n        "@rosdistro//cc:googletest",\n    ],\n'
-         ') for test in [\n    "external_load_test",\n    "unmanaged_test",\n]]\n\n'
+         ') for test in [\n    "external_load_test",\n    "multi_library_exit_test",\n    "unmanaged_test",\n]]\n\n'
          'cc_test(\n    name = "class_loader_utest",'),
     ],
     # New upstream service (used by rosbag2_transport's recorder) that the release overlay does not know about.
