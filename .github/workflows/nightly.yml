@@ -100,7 +100,12 @@ jobs:
         run: sudo rm -rf /usr/share/dotnet /opt/ghc /opt/hostedtoolcache/CodeQL
       - name: Qt runtime libraries
         # PySide6 (rqt_*, python_qt_binding, qt_dotgraph) dlopens libEGL, and the rviz tests link libOpenGL; the hosted image has neither
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq libegl1 libgl1 libopengl0 libglx0 libx11-6 libxcb1 libxkbcommon0 libfontconfig1 libdbus-1-3
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libegl1 libgl1 libopengl0 libglx0 libx11-6 libxcb1 libxkbcommon0 libfontconfig1 libdbus-1-3 xvfb libgl1-mesa-dri
+      - name: Virtual display
+        # rviz's OGRE render system opens an X display ("Unable to open display:"); software GL from Mesa
+        run: |
+          Xvfb :99 -screen 0 1280x1024x24 +extension GLX &
+          echo DISPLAY=:99 >> "$GITHUB_ENV"
       - uses: actions/download-artifact@v4
         with:
           name: prepared
@@ -115,7 +120,7 @@ jobs:
           mv prepared/master-registry .
           SKIP_GENERATE=1 NIGHTLY_TARGETS=prepared/ros-central-registry/workspace/nightly-targets.txt \
             NIGHTLY_SHARD=${{ matrix.shard }}/${{ needs.prepare.outputs.shards }} \
-            tools/run_nightly_master.sh --test_output=errors --nocache_test_results --jobs=128 --test_env=RMW_IMPLEMENTATION=${{ matrix.rmw }} ${{ !matrix.lint && '--test_tag_filters=-lint' || '' }} 2>&1 | tee nightly.log || true
+            tools/run_nightly_master.sh --test_output=errors --nocache_test_results --jobs=128 --test_env=RMW_IMPLEMENTATION=${{ matrix.rmw }} --test_env=DISPLAY=:99 ${{ !matrix.lint && '--test_tag_filters=-lint' || '' }} 2>&1 | tee nightly.log || true
       - name: Summarize
         if: always()
         run: |
