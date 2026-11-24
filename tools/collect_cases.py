@@ -26,7 +26,7 @@ def main():
     logdir = sys.argv[3] if len(sys.argv) > 3 else None
     res = {}
     for dirpath, _, files in os.walk(root, followlinks=False):
-        if "test.xml" not in files:
+        if "test.xml" not in files and "test.log" not in files:
             continue
         rel = os.path.relpath(dirpath, root)
         parts = rel.split(os.sep)
@@ -35,6 +35,13 @@ def main():
             label = f"{repo}//" + "/".join(parts[2:])
         else:
             label = rel
+        if "test.xml" not in files:
+            # a test that was killed (abort, timeout) can leave only its log: record it as having no cases
+            res[label] = []
+            if logdir:
+                os.makedirs(logdir, exist_ok=True)
+                shutil.copy(os.path.join(dirpath, "test.log"), os.path.join(logdir, label.replace("/", "__") + ".log"))
+            continue
         try:
             tree = ET.parse(os.path.join(dirpath, "test.xml"))
         except ET.ParseError:
