@@ -135,6 +135,10 @@ FIXUPS = {
         ("BUILD.bazel", '        "//test/msg:ArrayVal.msg",\n', '        "//test/msg:ArrayVal.msg",\n        "//test/msg:Constants.msg",\n'),
     ],
     "rviz_default_plugins": [
+        # RCR tags the display/visual tests manual+xfail because they could not run (no OGRE GL plugin, no display).
+        # With the plugin restored and Xvfb on the runner they are part of the nightly again; keep no-sandbox.
+        ("test/BUILD.bazel", '    tags = [\n        "manual",\n        "no-sandbox",\n        "xfail",\n    ],\n',
+         '    tags = ["no-sandbox"],\n'),
         ("BUILD.bazel", '\nHEADERS = [\n',
          '\nHEADERS = [\n'
          '    "include/rviz_default_plugins/displays/overlay/overlay_utils.hpp",\n'
