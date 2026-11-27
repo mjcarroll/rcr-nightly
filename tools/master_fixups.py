@@ -134,11 +134,25 @@ FIXUPS = {
         ("BUILD.bazel", '        "//test/msg:ArrayVal",\n', '        "//test/msg:ArrayVal",\n        "//test/msg:Constants",\n'),
         ("BUILD.bazel", '        "//test/msg:ArrayVal.msg",\n', '        "//test/msg:ArrayVal.msg",\n        "//test/msg:Constants.msg",\n'),
     ],
+    # qt_cc_test defaults to QT_QPA_PLATFORM=offscreen (and that wins over --test_env); under it Qt's winId() is not an
+    # X window, so Ogre cannot create a GLX render window on it. Tests that render need the xcb platform (Xvfb on CI).
+    "rviz_common": [
+        ("BUILD.bazel", '    name = "frame_manager_test",\n    srcs = [],\n    data = TEST_DATA,\n',
+         '    name = "frame_manager_test",\n    srcs = [],\n    data = TEST_DATA,\n'
+         '    env = {"QT_QPA_PLATFORM": "xcb"},\n'),
+    ],
     "rviz_default_plugins": [
-        # RCR tags the display/visual tests manual+xfail because they could not run (no OGRE GL plugin, no display).
-        # With the plugin restored and Xvfb on the runner they are part of the nightly again; keep no-sandbox.
-        ("test/BUILD.bazel", '    tags = [\n        "manual",\n        "no-sandbox",\n        "xfail",\n    ],\n',
-         '    tags = ["no-sandbox"],\n'),
+        ("test/BUILD.bazel", '    data = TEST_DATA,\n',
+         '    data = TEST_DATA,\n    env = {"QT_QPA_PLATFORM": "xcb"},\n'),
+        ("test/BUILD.bazel", '    "@rviz_rendering_tests//:ament_index",\n] + [',
+         '    "@rviz_rendering_tests//:ament_index",\n    "@rviz_visual_testing_framework//:ament_index",\n    "@urdf//:ament_index",\n    "@urdf_parser_plugin//:ament_index",\n] + ['),
+        # RCR tags the display tests manual+xfail because they could not run (no OGRE GL plugin, no display). With the
+        # plugin restored and Xvfb on the runner they run again. The *_visual_test targets stay manual: upstream only
+        # builds them with -DEnableVisualTests=True (they also need reference images), so the nightly never ran them.
+        ("test/BUILD.bazel",
+         '    tags = [\n        "manual",\n        "no-sandbox",\n        "xfail",\n    ],\n'
+         '    deps = TEST_DEPS,\n) for test, srcs in DISPLAY_TESTS.items()]',
+         '    tags = ["no-sandbox"],\n    deps = TEST_DEPS,\n) for test, srcs in DISPLAY_TESTS.items()]'),
         ("BUILD.bazel", '\nHEADERS = [\n',
          '\nHEADERS = [\n'
          '    "include/rviz_default_plugins/displays/overlay/overlay_utils.hpp",\n'
@@ -195,6 +209,7 @@ FIXUPS = {
 MODULE_FIXUPS = {
     "camera_info_manager_py": ([], ["ament_mypy"]),
     "rmw_implementation": (["rmw_fastrtps_dynamic_cpp"], []),
+    "rviz_default_plugins": ([], ["urdf", "urdf_parser_plugin"]),
     "rmw_fastrtps_cpp": (["rmw_fastrtps_shared_cpp"],
                          ["rmw_security_common", "rosidl_typesupport_introspection_c", "rosidl_typesupport_introspection_cpp"]),
 }
