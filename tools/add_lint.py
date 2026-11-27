@@ -46,10 +46,43 @@ def _has_files(work, linter):
     return False
 
 
+def _explicit_lint(cm):
+    """Packages that call ament_<linter>() themselves instead of ament_lint_auto: (linters, EXCLUDE paths)."""
+    sets = {m.group(1): re.findall(r'[\w./-]+', m.group(2))
+            for m in re.finditer(r"set\s*\(\s*(\w+)([^)]*)\)", cm)}
+    found, excl = [], set()
+    for m in re.finditer(r"\bament_(copyright|cpplint|lint_cmake|uncrustify|xmllint)\s*\(([^)]*)\)", cm):
+        found.append(m.group(1))
+        em = re.search(r"EXCLUDE\s+((?:(?!\b[A-Z_]{4,}\b)[^\n]|\n)*?)(?=\b(?:LANGUAGE|MAX_LINE_LENGTH|TESTNAME|FILTERS|ROOT|CONFIG_FILE)\b|$)", m.group(2))
+        for tok in re.findall(r"\$\{(\w+)\}|([\w./-]+)", em.group(1) if em else ""):
+            if tok[0]:
+                excl |= set(sets.get(tok[0], []))
+            elif tok[1] and "." in tok[1]:
+                excl.add(tok[1])
+    return found, sorted(excl)
+
+
+def lint_args(work):
+    """Quoted arguments the package passes to a linter, e.g. ament_lint_cmake("--filter=-convention/filename")."""
+    cm = _cmake(work)
+    out = {}
+    for m in re.finditer(r"\bament_(lint_cmake|cpplint|uncrustify|copyright|xmllint)\s*\(([^)]*)\)", cm):
+        a = re.findall(r'"(--[^"]+)"', m.group(2))
+        if a:
+            out[m.group(1)] = a
+    return out
+
+
+def explicit_excludes(work):
+    cm = _cmake(work)
+    return _explicit_lint(cm)[1] if "ament_lint_auto_find_test_dependencies" not in cm else []
+
+
 def linters_for(work):
     cm = _cmake(work)
     if "ament_lint_auto_find_test_dependencies" not in cm:
-        return []
+        found, _ = _explicit_lint(cm)
+        return [l for l in COMMON if l in found and _has_files(work, l)]
     pkg_xml = (Path(work) / "package.xml").read_text() if (Path(work) / "package.xml").exists() else ""
     ls = list(COMMON) if "ament_lint_common" in pkg_xml else [l for l in COMMON if f"ament_cmake_{l}" in pkg_xml]
     skipped = set()   # list(APPEND|set AMENT_LINT_AUTO_EXCLUDE ament_cmake_x ...)
@@ -71,7 +104,7 @@ def add_lint(pkg, overlay, work, text, ws_text):
     patched = set()   # files the RCR (or our) patches rewrite: upstream's lint never saw those edits either
     for pf in (Path(overlay).parent / "patches").glob("*"):
         patched |= {m.group(1) for m in re.finditer(r"(?m)^\+\+\+ b/(\S+)", pf.read_text(errors="replace"))}
-    ov_only = sorted(set(patched) | set(EXTRA_EXCLUDE.get(pkg, [])) | set(str(p.relative_to(overlay)) for p in Path(overlay).rglob("*")
+    ov_only = sorted(set(patched) | set(EXTRA_EXCLUDE.get(pkg, [])) | set(explicit_excludes(work)) | set(str(p.relative_to(overlay)) for p in Path(overlay).rglob("*")
                      if p.is_file() and not (Path(work) / p.relative_to(overlay)).exists()
                      and p.name not in ("BUILD.bazel", "LICENSE")))
     # globs stop at package boundaries: every subdirectory with its own BUILD file exports its lintable files
@@ -82,8 +115,10 @@ def add_lint(pkg, overlay, work, text, ws_text):
         sb.write_text('load("@rcr_lint//:defs.bzl", "ament_lint_files")\n' + sb.read_text().rstrip("\n")
                       + f"\n\nament_lint_files(exclude = {json.dumps(sub_ex)})\n")
     root_ex = [e for e in ov_only if not any(e.startswith(d + "/") for d in subs)]
+    la = {k: v for k, v in lint_args(work).items() if k in ls}
     call = (f"\n\nament_lint_tests(\n    linters = {json.dumps(ls)},\n    exclude = {json.dumps(root_ex)},\n"
-            f"    subpackages = {json.dumps(subs)},\n)\n")
+            f"    subpackages = {json.dumps(subs)},\n"
+            + (f"    linter_args = {json.dumps(la)},\n" if la else "") + ")\n")
     build.write_text(LOAD + body.rstrip("\n") + call)
     deps = ["rcr_lint"] + [f"ament_{l}" for l in ls]
     for d in deps:

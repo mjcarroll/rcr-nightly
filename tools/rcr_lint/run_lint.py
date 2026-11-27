@@ -14,7 +14,7 @@ def main():
     pkg_dir = os.path.dirname(r.Rlocation(sys.argv[2]))
     xunit = os.path.join(os.environ.get("TEST_TMPDIR", tempfile.gettempdir()), "lint.xml")
     # the generated copy of this script sits in the package directory: don't lint it
-    cmd = [exe, "--xunit-file", xunit, pkg_dir]
+    cmd = [exe, "--xunit-file", xunit] + sys.argv[3:] + [pkg_dir]
     if "lint_cmake" not in sys.argv[1]:   # ament_lint_cmake has no --exclude (and does not look at .py anyway)
         cmd[1:1] = ["--exclude", os.path.basename(sys.argv[0])]
     rc = subprocess.run(cmd).returncode

@@ -22,7 +22,7 @@ def ament_lint_files(exclude = []):
         visibility = ["//visibility:public"],
     )
 
-def ament_lint_tests(linters, exclude = [], subpackages = []):
+def ament_lint_tests(linters, exclude = [], subpackages = [], linter_args = {}):
     """Defines test_<linter> for each linter that has files to look at and no test of that name yet."""
     for linter in linters:
         name = "test_" + linter
@@ -42,7 +42,7 @@ def ament_lint_tests(linters, exclude = [], subpackages = []):
             name = name,
             srcs = [name + "_main.py"],
             main = name + "_main.py",
-            args = ["$(rlocationpath %s)" % tool, "$(rlocationpath package.xml)"],
+            args = ["$(rlocationpath %s)" % tool, "$(rlocationpath package.xml)"] + linter_args.get(linter, []),
             data = files + [f for f in ["package.xml"] if f not in files] + ["//%s:lint_files" % d for d in subpackages] + [tool],
             deps = ["@rules_python//python/runfiles"],
             size = "medium",
