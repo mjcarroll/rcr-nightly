@@ -8,3 +8,5 @@
 @rcl_action//test:test_action_communication rmw_fastrtps_cpp
 @ros2topic//test:test_echo_pub rmw_cyclonedds_cpp
 @rosbag2_storage_mcap//:test_cpplint rmw_fastrtps_cpp,rmw_zenoh_cpp
+@rqt_py_common//test:rqt_py_common *
+@rviz_common//:frame_manager_test *

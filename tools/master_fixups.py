@@ -124,6 +124,16 @@ FIXUPS = {
     ],
     # New upstream overlay/tf_trajectory display and tool headers (their .cpp files were picked up by the
     # reconciler, the headers were not). The ones with Q_OBJECT must also go through moc.
+    # Upstream (rqt#371) added test/msg/Constants.msg; the reconciler does not add new interface files.
+    "rqt_py_common": [
+        ("test/msg/BUILD.bazel", '    "ArrayVal.msg",\n    "Val.msg",\n',
+         '    "ArrayVal.msg",\n    "Constants.msg",\n    "Val.msg",\n'),
+        ("test/msg/BUILD.bazel", '\nros_message(\n    name = "Val",',
+         '\nros_message(\n    name = "Constants",\n    src = "Constants.msg",\n'
+         '    package = "rqt_py_common_test_interfaces",\n)\n\nros_message(\n    name = "Val",'),
+        ("BUILD.bazel", '        "//test/msg:ArrayVal",\n', '        "//test/msg:ArrayVal",\n        "//test/msg:Constants",\n'),
+        ("BUILD.bazel", '        "//test/msg:ArrayVal.msg",\n', '        "//test/msg:ArrayVal.msg",\n        "//test/msg:Constants.msg",\n'),
+    ],
     "rviz_default_plugins": [
         ("BUILD.bazel", '\nHEADERS = [\n',
          '\nHEADERS = [\n'

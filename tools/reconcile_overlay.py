@@ -100,6 +100,16 @@ def reconcile_build(build, base, others, baseline, referenced_elsewhere_pkg, pro
     item_lines = {n for _, o, c, _, _ in lists for n in range(o + 1, c)}
     dict_str = {n: DICT_STR.match(l) for n, l in enumerate(lines) if DICT_STR.match(l)}
     item_lines |= set(dict_str)
+    # exports_files([ ... ]) and `) for x in [ ... ]` comprehensions are plain file lists: its entries must neither shield a path from pruning elsewhere
+    # nor survive when the file is gone upstream.
+    export_spans = []
+    for n, l in enumerate(lines):
+        if re.match(r'^\s*(exports_files\(\[|\)\s*for\s+\w+\s+in\s+\[)\s*$', l):
+            e = n + 1
+            while e < len(lines) and not re.match(r'^\s*\]', lines[e]):
+                e += 1
+            export_spans.append((n, e, l.lstrip().startswith('exports_files')))
+            item_lines |= set(range(n + 1, e))
     non_list = set()
     for n, l in enumerate(lines):
         if n not in item_lines:
@@ -112,6 +122,16 @@ def reconcile_build(build, base, others, baseline, referenced_elsewhere_pkg, pro
                 continue
             p = m.group(2)
             if _plain(p) and os.path.splitext(p)[1] and "/" in p + "/" and not p.startswith(("http", ".")) and not (base / p).exists() and p not in provided and p not in non_list:
+                drop.add(n)
+                rep["removed"].append(p)
+    for o, c, any_ext in export_spans:
+        for n in range(o + 1, c):
+            m = ITEM.match(lines[n])
+            if not m:
+                continue
+            p = m.group(2)
+            ext = os.path.splitext(p)[1]
+            if _plain(p) and ext and (any_ext or ext in CODE_EXT) and not p.startswith(("http", ".")) and not (base / p).exists() and p not in provided and p not in non_list:
                 drop.add(n)
                 rep["removed"].append(p)
     # dict-style entries: "test_x": ["path.cpp"],
