@@ -17,7 +17,7 @@ from pathlib import Path
 CODE_EXT = (".hpp", ".h", ".hh", ".cpp", ".cc", ".c", ".inc", ".ipp", ".hxx", ".py", ".em")
 ITEM = re.compile(r'^(\s*)"([^"\s()\'=\[\]][^"\s()\'=]*)",?\s*$')  # file refs only: not quoted code lines (e.g. write_file content)
 LIST_OPEN = re.compile(r'^(\s*)(\w+)\s*=\s*(?:\[[^\]]*\]\s*\+\s*)*\[\s*$')
-DICT_STR = re.compile(r'^(\s+)"([^"]+)":\s*"(?!\.\./)([^"/][^"]*\.[A-Za-z0-9]+|[^"]+/[^"]*\.[A-Za-z0-9]+)",?\s*$')
+DICT_STR = re.compile(r'^(\s+)"((?![@:/])[^"]+)":\s*"(?!\.\./)([^"/][^"]*\.[A-Za-z0-9]+|[^"]+/[^"]*\.[A-Za-z0-9]+)",?\s*$')
 LIST_CONT = re.compile(r'^(\s*)\]\s*\+\s*\[\s*$')
 DICT_ITEM = re.compile(r'^(\s*)"([^"]+)":\s*\[((?:"[^"]+"(?:,\s*)?)+)\],?\s*$')
 HDR_EXT = {".h", ".hpp", ".hh", ".hxx", ".inc", ".ipp"}

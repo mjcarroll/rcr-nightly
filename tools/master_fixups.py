@@ -161,11 +161,26 @@ FIXUPS = {
          '    hdrs = HEADERS,\n    includes = ["include"],\n    local_defines = ros_local_defines(),\n    deps = DEPENDENCIES.values(),',
          '    hdrs = HEADERS,\n    includes = ["include", "src"],\n    local_defines = ros_local_defines(),\n    deps = DEPENDENCIES.values(),'),
     ],
+    # Upstream removed rmw_fastrtps_dynamic_cpp / rmw_fastrtps_shared_cpp (rmw_fastrtps#923); the stale RCR release
+    # no longer compiles against master rmw (rmw_send_response takes a const response), so drop it from the set.
+    "rmw_implementation": [
+        ("BUILD.bazel",
+         'config_setting(\n    name = "rmw_fastrtps_dynamic_cpp",\n'
+         '    flag_values = {"@rosdistro//:rmw": "rmw_fastrtps_dynamic_cpp"},\n)\n\n', ""),
+        ("BUILD.bazel", '            "@rmw_fastrtps_dynamic_cpp",\n', ""),
+        ("BUILD.bazel", '            "@rmw_fastrtps_dynamic_cpp//:ament_package",\n', ""),
+        ("BUILD.bazel", '        "@rmw_fastrtps_dynamic_cpp//:ament_package",\n', ""),
+        ("BUILD.bazel",
+         '        ":rmw_fastrtps_dynamic_cpp": "@rmw_fastrtps_dynamic_cpp//:rmw_fastrtps_dynamic_cpp_library",\n', ""),
+        ("BUILD.bazel",
+         '        ":rmw_fastrtps_dynamic_cpp": "@rmw_fastrtps_dynamic_cpp//:rmw_fastrtps_dynamic_cpp",\n', ""),
+    ],
 }
 
 # MODULE.bazel edits: (old module dep to drop, new module deps to add), versions come from the workspace pins.
 MODULE_FIXUPS = {
     "camera_info_manager_py": ([], ["ament_mypy"]),
+    "rmw_implementation": (["rmw_fastrtps_dynamic_cpp"], []),
     "rmw_fastrtps_cpp": (["rmw_fastrtps_shared_cpp"],
                          ["rmw_security_common", "rosidl_typesupport_introspection_c", "rosidl_typesupport_introspection_cpp"]),
 }
