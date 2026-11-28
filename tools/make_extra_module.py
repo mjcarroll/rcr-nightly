@@ -16,6 +16,8 @@ usage: make_extra_module.py --rcr <rcr checkout> --out <master-registry dir> pkg
 """
 import argparse, base64, hashlib, json, os, re, shutil, subprocess, sys, tempfile, urllib.request
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from add_lint import add_lint
 
 CACHE = Path(os.environ.get("MM_CACHE", os.path.expanduser("~/.cache/mm_cache"))); CACHE.mkdir(parents=True, exist_ok=True)
 HERE = Path(__file__).resolve().parent
@@ -37,7 +39,7 @@ def latest_version(modules_dir, name):
     return sorted(vs, key=lambda s: [int(x) if x.isdigit() else 0 for x in re.split(r"[.\-]", s)])[-1]
 
 
-def one(pkg, rcr, out):
+def one(pkg, rcr, out, ws_text=""):
     spec_dir = HERE / "extra_modules" / pkg
     spec = json.load(open(spec_dir / "spec.json"))
     sha = json.loads(subprocess.run(["gh", "api", f"repos/{spec['repo']}/commits/{spec['ref']}"],
@@ -67,6 +69,8 @@ def one(pkg, rcr, out):
         have = set(re.findall(r'bazel_dep\(name = "([^"]+)"', text))
         text += "\n" + "".join(l + "\n" for l in extra.read_text().splitlines()
                                if not (m := re.match(r'bazel_dep\(name = "([^"]+)"', l)) or m.group(1) not in have)
+    if not os.environ.get("NO_LINT"):    # same lint tests as the released packages get (upstream's ament_lint_auto set)
+        text, _ = add_lint(pkg, mod / "overlay", root / spec["subdir"], text, ws_text)
     ov = {str(p.relative_to(mod / "overlay")): sri(p) for p in sorted((mod / "overlay").rglob("*")) if p.is_file()}
     digest = hashlib.sha256(json.dumps([ov, sri(tgz), text], sort_keys=True).encode()).hexdigest()[:6]
     ver = f"0.0.0.master.{sha[:7]}.{digest}"
@@ -87,10 +91,11 @@ def one(pkg, rcr, out):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rcr", required=True); ap.add_argument("--out", required=True)
-    ap.add_argument("pkgs", nargs="+")
+    ap.add_argument("--workspace-module"); ap.add_argument("pkgs", nargs="+")
     a = ap.parse_args()
     rcr, out = Path(a.rcr).resolve(), Path(a.out).resolve()
-    vers = {p: one(p, rcr, out) for p in a.pkgs}
+    ws_text = Path(a.workspace_module).read_text() if a.workspace_module else ""
+    vers = {p: one(p, rcr, out, ws_text) for p in a.pkgs}
     ovr = out / "overrides.bazel"
     lines = ovr.read_text().splitlines() if ovr.exists() else []
     lines = [l for l in lines if not any(f'module_name = "{p}"' in l for p in vers)]
