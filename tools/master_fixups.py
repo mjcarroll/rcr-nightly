@@ -160,6 +160,10 @@ FIXUPS = {
         ("test/BUILD.bazel", '    tags = ["manual"] if test == "transport" else [],\n', ''),
         ("test/BUILD.bazel", '        "@rcl_interfaces//:py",\n', '        "@rcl_interfaces//:py",\n        "@rosbag2_interfaces//:py",\n'),
     ],
+    "rclcpp_components": [
+        # removed upstream (rclcpp#3447); the overlay's ament_package still lists the executables
+        ("BUILD.bazel", '        ":component_container_event",\n        ":component_container_mt",\n        ":component_container_isolated",\n', ''),
+    ],
     "camera_info_manager": [
         # RCR tags the unit test manual+xfail; it needs only the installed calibration yaml.
         ("tests/BUILD.bazel", '    tags = [\n        "manual",\n        "xfail",\n    ],\n', ''),
