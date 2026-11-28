@@ -170,6 +170,11 @@ FIXUPS = {
          'load("@rosdistro//ament:defs.bzl", "ament_index", "ament_package")\nload("@rosdistro//python:defs.bzl", "py_pytest")\n'),
         ("BUILD.bazel", 'ament_package(\n    name = "ament_package",', '[py_pytest(\n    name = test,\n    srcs = ["test/{0}.py".format(test)],\n    imports = ["test"],\n    deps = [\n        ":rqt_bag",\n        "@rclpy",\n        "@rosbag2_py",\n        "@rosgraph_msgs//:py",\n        "@std_msgs//:py",\n    ],\n) for test in [\n    "test_player",\n    "test_player_clock",\n    "test_rosbag2_compression",\n    "test_rosbag2_missing_message_package",\n]]\n\n' + 'ament_package(\n    name = "ament_package",'),
     ],
+    "rclpy": [
+        # test_executor passes (RCR tagged it manual+xfail)
+        ("test/BUILD.bazel", '    tags = [\n        "manual",\n        "xfail",\n    ] if test == "test_executor" else (["exclusive"] if test == "test_timer" else []),\n',
+         '    tags = ["exclusive"] if test == "test_timer" else [],\n'),
+    ],
     "camera_info_manager": [
         # RCR tags the unit test manual+xfail; it needs only the installed calibration yaml.
         ("tests/BUILD.bazel", '    tags = [\n        "manual",\n        "xfail",\n    ],\n', ''),
