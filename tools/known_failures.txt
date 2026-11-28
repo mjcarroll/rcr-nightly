@@ -9,3 +9,7 @@
 @ros2topic//test:test_echo_pub rmw_cyclonedds_cpp
 @rosbag2_storage_mcap//:test_cpplint rmw_fastrtps_cpp,rmw_zenoh_cpp
 @rqt_py_common//test:rqt_py_common *
+# tests pass; static rclcpp node destroyed at exit() after zenoh's tokio TLS is gone -> abort in z_undeclare_queryable
+@rviz_default_plugins//test:image_display_test rmw_zenoh_cpp
+@rviz_default_plugins//test:marker_common_test rmw_zenoh_cpp
+@rviz_default_plugins//test:marker_test rmw_zenoh_cpp
