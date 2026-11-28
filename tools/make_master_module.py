@@ -72,12 +72,13 @@ def main():
         applied, failed, rebased = {}, [], {}
         for name in sorted(src_in.get("patches", {})):
             pf = base / "patches" / name
+            hand = Path(__file__).resolve().parent / "hand_rebased" / pkg / name
             dry = subprocess.run(["patch", "-p1", "--forward", "-s", "--dry-run", "-d", str(work), "-i", str(pf)], capture_output=True, text=True)
-            if dry.returncode == 0:
+            # a hand-rebased patch wins when it applies: the RCR patch can apply by offset but land in the wrong place
+            if dry.returncode == 0 and not (hand.exists() and subprocess.run(["patch", "-p1", "--forward", "-s", "--dry-run", "-d", str(work), "-i", str(hand)]).returncode == 0):
                 subprocess.run(["patch", "-p1", "--forward", "-s", "-d", str(work), "-i", str(pf)], check=True)
                 shutil.copy(pf, mod / "patches" / name); applied[name] = sri(mod / "patches" / name)
                 continue
-            hand = Path(__file__).resolve().parent / "hand_rebased" / pkg / name
             if hand.exists() and subprocess.run(["patch", "-p1", "--forward", "-s", "--dry-run", "-d", str(work), "-i", str(hand)]).returncode == 0:
                 subprocess.run(["patch", "-p1", "--forward", "-s", "-d", str(work), "-i", str(hand)], check=True)
                 shutil.copy(hand, mod / "patches" / name); applied[name] = sri(mod / "patches" / name); rebased[name] = "hand"
