@@ -1,0 +1,70 @@
+diff --git a/include/rclcpp/client.hpp b/include/rclcpp/client.hpp
+index 491be8c2..45a88ace 100644
+--- a/include/rclcpp/client.hpp
++++ b/include/rclcpp/client.hpp
+@@ -325,6 +325,10 @@ protected:
+   std::shared_ptr<rclcpp::Context> context_;
+   rclcpp::Logger node_logger_;
+ 
++  // The introspection publisher keeps a raw pointer to this clock's rcl handle and uses it while
++  // finalizing the client. Keep the clock alive until client_handle_ (declared below) is finalized.
++  rclcpp::Clock::SharedPtr introspection_clock_;
++
+   std::recursive_mutex callback_mutex_;
+   // It is important to declare on_new_response_callback_ before
+   // client_handle_, so on destruction the client is
+@@ -759,6 +763,8 @@ public:
+     if (RCL_RET_OK != ret) {
+       rclcpp::exceptions::throw_from_rcl_error(ret, "failed to configure client introspection");
+     }
++
++    introspection_clock_ = clock;
+   }
+ 
+ protected:
+diff --git a/include/rclcpp/service.hpp b/include/rclcpp/service.hpp
+index 3afe1d2e..909d10fc 100644
+--- a/include/rclcpp/service.hpp
++++ b/include/rclcpp/service.hpp
+@@ -212,6 +212,10 @@ protected:
+ 
+   std::shared_ptr<rcl_node_t> node_handle_;
+ 
++  // The introspection publisher keeps a raw pointer to this clock's rcl handle and uses it while
++  // finalizing the service. Keep the clock alive until service_handle_ (declared below) is finalized.
++  rclcpp::Clock::SharedPtr introspection_clock_;
++
+   std::recursive_mutex callback_mutex_;
+   // It is important to declare on_new_request_callback_ before
+   // service_handle_, so on destruction the service is
+@@ -475,6 +479,8 @@ public:
+     if (RCL_RET_OK != ret) {
+       rclcpp::exceptions::throw_from_rcl_error(ret, "failed to configure service introspection");
+     }
++
++    introspection_clock_ = clock;
+   }
+ 
+ private:
+diff --git a/test/rclcpp/test_service_introspection.cpp b/test/rclcpp/test_service_introspection.cpp
+index 6d561410..5e56710f 100644
+--- a/test/rclcpp/test_service_introspection.cpp
++++ b/test/rclcpp/test_service_introspection.cpp
+@@ -431,3 +431,17 @@ TEST_F(TestServiceIntrospection, service_introspection_enable_disable_event_cont
+     }
+   }
+ }
++
++TEST_F(TestServiceIntrospection, introspection_keeps_clock_alive)
++{
++  // The introspection publisher uses the clock while the service/client are finalized, so the
++  // service/client must keep it alive even if the caller drops its reference first.
++  auto clock = std::make_shared<rclcpp::Clock>(RCL_STEADY_TIME);
++  client->configure_introspection(clock, rclcpp::ServicesQoS(), RCL_SERVICE_INTROSPECTION_METADATA);
++  service->configure_introspection(
++    clock, rclcpp::ServicesQoS(), RCL_SERVICE_INTROSPECTION_METADATA);
++  clock.reset();
++
++  client.reset();
++  service.reset();
++}
