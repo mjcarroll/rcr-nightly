@@ -148,6 +148,18 @@ FIXUPS = {
         ("test/BUILD.bazel", '        "unmanaged_test.cpp",\n', ''),
         ("test/BUILD.bazel", 'cc_test(\n    name = "class_loader_fviz_test",', 'class_loader_plugin(\n    name = "class_loader_TestSharedLibrary",\n    srcs = ["shared_library_test_library.cpp"],\n    deps = ["//:class_loader_headers"],\n)\n\nament_index(\n    name = "ament_index_unmanaged_test",\n    libraries = [\n        ":class_loader_TestPlugins1",\n        ":class_loader_TestPlugins2",\n        ":class_loader_TestPlugins3",\n    ],\n)\n\ncc_test(\n    name = "class_loader_unmanaged_test",\n    srcs = ["unmanaged_test.cpp", "base.hpp"],\n    data = [":ament_index_unmanaged_test"],\n    dynamic_deps = ["//:transitive_dynamic_deps"],\n    deps = DEPENDENCIES.values() + [\n        "//:class_loader_library",\n        "@rosdistro//cc:googletest",\n    ],\n)\n\nament_index(\n    name = "ament_index_external_load_test",\n    libraries = [\n        ":class_loader_TestPlugins1",\n        ":class_loader_TestPlugins2",\n    ],\n)\n\ncc_test(\n    name = "class_loader_external_load_test",\n    srcs = ["external_load_test.cpp", "base.hpp"],\n    data = [":ament_index_external_load_test"],\n    dynamic_deps = ["//:transitive_dynamic_deps"],\n    deps = DEPENDENCIES.values() + [\n        "//:class_loader_library",\n        "@rosdistro//cc:googletest",\n    ],\n)\n\nament_index(\n    name = "ament_index_multi_library_exit_test",\n    libraries = [\n        ":class_loader_TestPlugins1",\n    ],\n)\n\ncc_test(\n    name = "class_loader_multi_library_exit_test",\n    srcs = ["multi_library_exit_test.cpp"],\n    data = [":ament_index_multi_library_exit_test"],\n    dynamic_deps = ["//:transitive_dynamic_deps"],\n    deps = DEPENDENCIES.values() + [\n        "//:class_loader_library",\n        "@rosdistro//cc:googletest",\n    ],\n)\n\nament_index(\n    name = "ament_index_shared_library_test",\n    libraries = [":class_loader_TestSharedLibrary"],\n)\n\ncc_test(\n    name = "class_loader_shared_library_test",\n    srcs = ["shared_library_test.cpp"],\n    data = [":ament_index_shared_library_test"],\n    dynamic_deps = ["//:transitive_dynamic_deps"],\n    deps = DEPENDENCIES.values() + [\n        "//:class_loader_library",\n        "@rosdistro//cc:googletest",\n    ],\n)\n\ncc_test(\n    name = "class_loader_fviz_test",'),
     ],
+    "lifecycle": [
+        ("test/BUILD.bazel", '    tags = [\n        "manual",\n        "xfail",\n    ],\n', ''),
+    ],
+    "lifecycle_py": [
+        ("test/BUILD.bazel", '    tags = [\n        "manual",\n        "xfail",\n    ],\n', ''),
+        ("test/BUILD.bazel", '        "@lifecycle//:lifecycle_listener",\n',
+         '        "@lifecycle//:lifecycle_listener",\n        "//:lifecycle_talker",\n'),
+    ],
+    "rosbag2_py": [
+        ("test/BUILD.bazel", '    tags = ["manual"] if test == "transport" else [],\n', ''),
+        ("test/BUILD.bazel", '        "@rcl_interfaces//:py",\n', '        "@rcl_interfaces//:py",\n        "@rosbag2_interfaces//:py",\n'),
+    ],
     "camera_info_manager": [
         # RCR tags the unit test manual+xfail; it needs only the installed calibration yaml.
         ("tests/BUILD.bazel", '    tags = [\n        "manual",\n        "xfail",\n    ],\n', ''),
@@ -225,6 +237,7 @@ FIXUPS = {
 MODULE_FIXUPS = {
     "camera_info_manager_py": ([], ["ament_mypy"]),
     "rmw_implementation": (["rmw_fastrtps_dynamic_cpp"], []),
+    "rosbag2_py": ([], ["rosbag2_interfaces"]),
     "rviz_default_plugins": ([], ["urdf", "urdf_parser_plugin"]),
     "rmw_fastrtps_cpp": (["rmw_fastrtps_shared_cpp"],
                          ["rmw_security_common", "rosidl_typesupport_introspection_c", "rosidl_typesupport_introspection_cpp"]),
