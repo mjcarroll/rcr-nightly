@@ -136,6 +136,22 @@ FIXUPS = {
     ],
     # qt_cc_test defaults to QT_QPA_PLATFORM=offscreen (and that wins over --test_env); under it Qt's winId() is not an
     # X window, so Ogre cannot create a GLX render window on it. Tests that render need the xcb platform (Xvfb on CI).
+    "class_loader": [
+        # upstream now builds src/shared_library.cpp only with CLASS_LOADER_USE_RCPPUTILS=OFF; the default (ON) aliases
+        # rcpputils::SharedLibrary in the header, so compiling it clashes.
+        ("BUILD.bazel", '        "src/multi_library_class_loader.cpp",\n        "src/shared_library.cpp",\n',
+         '        "src/multi_library_class_loader.cpp",\n'),
+        ("test/BUILD.bazel", '        "external_load_test.cpp",\n', ''),
+        ("test/BUILD.bazel", '        "multi_library_exit_test.cpp",\n', ''),
+        ("test/BUILD.bazel", '        "shared_library_test.cpp",\n', ''),
+        ("test/BUILD.bazel", '        "shared_library_test_library.cpp",\n', ''),
+        ("test/BUILD.bazel", '        "unmanaged_test.cpp",\n', ''),
+        ("test/BUILD.bazel", 'cc_test(\n    name = "class_loader_fviz_test",', 'class_loader_plugin(\n    name = "class_loader_TestSharedLibrary",\n    srcs = ["shared_library_test_library.cpp"],\n    deps = ["//:class_loader_headers"],\n)\n\nament_index(\n    name = "ament_index_unmanaged_test",\n    libraries = [\n        ":class_loader_TestPlugins1",\n        ":class_loader_TestPlugins2",\n        ":class_loader_TestPlugins3",\n    ],\n)\n\ncc_test(\n    name = "class_loader_unmanaged_test",\n    srcs = ["unmanaged_test.cpp", "base.hpp"],\n    data = [":ament_index_unmanaged_test"],\n    dynamic_deps = ["//:transitive_dynamic_deps"],\n    deps = DEPENDENCIES.values() + [\n        "//:class_loader_library",\n        "@rosdistro//cc:googletest",\n    ],\n)\n\nament_index(\n    name = "ament_index_external_load_test",\n    libraries = [\n        ":class_loader_TestPlugins1",\n        ":class_loader_TestPlugins2",\n    ],\n)\n\ncc_test(\n    name = "class_loader_external_load_test",\n    srcs = ["external_load_test.cpp", "base.hpp"],\n    data = [":ament_index_external_load_test"],\n    dynamic_deps = ["//:transitive_dynamic_deps"],\n    deps = DEPENDENCIES.values() + [\n        "//:class_loader_library",\n        "@rosdistro//cc:googletest",\n    ],\n)\n\nament_index(\n    name = "ament_index_multi_library_exit_test",\n    libraries = [\n        ":class_loader_TestPlugins1",\n    ],\n)\n\ncc_test(\n    name = "class_loader_multi_library_exit_test",\n    srcs = ["multi_library_exit_test.cpp"],\n    data = [":ament_index_multi_library_exit_test"],\n    dynamic_deps = ["//:transitive_dynamic_deps"],\n    deps = DEPENDENCIES.values() + [\n        "//:class_loader_library",\n        "@rosdistro//cc:googletest",\n    ],\n)\n\nament_index(\n    name = "ament_index_shared_library_test",\n    libraries = [":class_loader_TestSharedLibrary"],\n)\n\ncc_test(\n    name = "class_loader_shared_library_test",\n    srcs = ["shared_library_test.cpp"],\n    data = [":ament_index_shared_library_test"],\n    dynamic_deps = ["//:transitive_dynamic_deps"],\n    deps = DEPENDENCIES.values() + [\n        "//:class_loader_library",\n        "@rosdistro//cc:googletest",\n    ],\n)\n\ncc_test(\n    name = "class_loader_fviz_test",'),
+    ],
+    "camera_info_manager": [
+        # RCR tags the unit test manual+xfail; it needs only the installed calibration yaml.
+        ("tests/BUILD.bazel", '    tags = [\n        "manual",\n        "xfail",\n    ],\n', ''),
+    ],
     "rviz_common": [
         ("BUILD.bazel", '    name = "frame_manager_test",\n    srcs = [],\n    data = TEST_DATA,\n',
          '    name = "frame_manager_test",\n    srcs = [],\n    data = TEST_DATA,\n'
