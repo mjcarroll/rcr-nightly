@@ -158,8 +158,68 @@ jobs:
             failed-logs-${{ matrix.rmw }}-${{ matrix.shard }}
             zenohd.log
 
+  # The tracing tests (lttng) are incompatible targets in the main shards; run them with tracepoints enabled, for
+  # one RMW, without rebuilding the rest of the suite that way.
+  tracing:
+    needs: prepare
+    if: needs.prepare.outputs.count != '0'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: true
+          disk-cache: nightly-tracing
+          repository-cache: true
+      - name: BuildBuddy
+        env:
+          BUILDBUDDY_API_KEY: ${{ secrets.BUILDBUDDY_API_KEY }}
+        run: ci/buildbuddy.sh
+      - name: LTTng session daemon
+        timeout-minutes: 10
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          for i in 1 2 3; do
+            sudo -E timeout 240 apt-get -o DPkg::Lock::Timeout=60 update -qq && \
+            sudo -E timeout 240 apt-get -o DPkg::Lock::Timeout=60 install -y -qq lttng-tools && exit 0
+            sleep $((i*15))
+          done
+          exit 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: prepared
+          path: prepared
+      - name: Tracing tests (rmw_fastrtps_cpp)
+        env:
+          SINCE_HOURS: ''
+          NIGHTLY_RMW: rmw_fastrtps_cpp
+        run: |
+          set -o pipefail
+          ci/setup.sh
+          mv prepared/master-registry .
+          printf '%s\n' '@test_tracetools//...' '@test_tracetools_launch//...' '@tracetools//...' '@tracetools_trace//...' '@tracetools_test//...' '@tracetools_launch//...' '@tracetools_read//...' '@ros2trace//...' > tracing-targets.txt
+          SKIP_GENERATE=1 NIGHTLY_TARGETS=tracing-targets.txt \
+            tools/run_nightly_master.sh --test_output=errors --nocache_test_results --jobs=128 --test_env=RMW_IMPLEMENTATION=rmw_fastrtps_cpp --test_tag_filters=-lint --@rosdistro//:enable_tracing 2>&1 | tee nightly.log || true
+      - name: Summarize
+        if: always()
+        run: python3 tools/summarize_nightly.py nightly.log --json summary-rmw_fastrtps_cpp-100.json | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Collect per-case results
+        if: always()
+        run: python3 tools/collect_cases.py ros-central-registry/workspace/bazel-testlogs/. cases-rmw_fastrtps_cpp-100.json failed-logs-rmw_fastrtps_cpp-100
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shard-rmw_fastrtps_cpp-tracing
+          path: |
+            nightly.log
+            summary-rmw_fastrtps_cpp-100.json
+            cases-rmw_fastrtps_cpp-100.json
+            failed-logs-rmw_fastrtps_cpp-100
+
   report:
-    needs: [prepare, test]
+    needs: [prepare, test, tracing]
     if: always() && needs.prepare.result == 'success'
     runs-on: ubuntu-24.04
     steps:
@@ -169,7 +229,7 @@ jobs:
           pattern: shard-*
           merge-multiple: true
       - name: Shard jobs ok
-        if: needs.test.result == 'failure' || needs.test.result == 'cancelled'
+        if: needs.test.result == 'failure' || needs.test.result == 'cancelled' || needs.tracing.result == 'failure' || needs.tracing.result == 'cancelled'
         run: echo "a test shard job did not complete (result ${{ needs.test.result }})"; exit 1
       - name: Merge summaries
         if: always()

@@ -37,7 +37,10 @@ def main():
     for f in sorted(glob.glob(os.path.join(a.dir, "summary-*.json"))):
         rmw = re.search(r"summary-(.+)-\d+\.json", os.path.basename(f)).group(1)
         d = json.load(open(f))
-        res[rmw].update(d["tests"])
+        for k, v in d["tests"].items():
+            # a SKIPPED (incompatible here) result must not hide a real result from another job
+            if v != "SKIPPED" or k not in res[rmw]:
+                res[rmw][k] = v
         build[rmw] += d.get("build_errors", [])
     if not res:
         print("## Nightly\n\nnothing to test (no changes in the window) or no summaries")

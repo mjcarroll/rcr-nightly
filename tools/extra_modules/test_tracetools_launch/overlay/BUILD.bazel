@@ -23,7 +23,13 @@ exports_files(["package.xml"])
     py_pytest(
         name = src.removeprefix("test/test_tracetools_launch/").removesuffix(".py"),
         timeout = "moderate",
+        # lttng-sessiond's socket lives under $LTTNG_HOME/.lttng; the sandbox HOME exceeds sun_path (108 bytes)
+        env = {"LTTNG_HOME": "/tmp"},
         srcs = [src],
+        data = [
+            "@test_tracetools//:ament_index",
+            "@test_tracetools//:libexec",
+        ],
         deps = [
             "@launch//:launch",
             "@launch_ros//:launch_ros",
