@@ -164,6 +164,12 @@ FIXUPS = {
         # removed upstream (rclcpp#3447); the overlay's ament_package still lists the executables
         ("BUILD.bazel", '        ":component_container_event",\n        ":component_container_mt",\n        ":component_container_isolated",\n', ''),
     ],
+    "rqt_bag": [
+        # RCR wires no tests for this package; upstream has four pytest files besides the lint ones
+        ("BUILD.bazel", 'load("@rosdistro//ament:defs.bzl", "ament_index", "ament_package")\n',
+         'load("@rosdistro//ament:defs.bzl", "ament_index", "ament_package")\nload("@rosdistro//python:defs.bzl", "py_pytest")\n'),
+        ("BUILD.bazel", 'ament_package(\n    name = "ament_package",', '[py_pytest(\n    name = test,\n    srcs = ["test/{0}.py".format(test)],\n    imports = ["test"],\n    deps = [\n        ":rqt_bag",\n        "@rclpy",\n        "@rosbag2_py",\n        "@rosgraph_msgs//:py",\n        "@std_msgs//:py",\n    ],\n) for test in [\n    "test_player",\n    "test_player_clock",\n    "test_rosbag2_compression",\n    "test_rosbag2_missing_message_package",\n]]\n\n' + 'ament_package(\n    name = "ament_package",'),
+    ],
     "camera_info_manager": [
         # RCR tags the unit test manual+xfail; it needs only the installed calibration yaml.
         ("tests/BUILD.bazel", '    tags = [\n        "manual",\n        "xfail",\n    ],\n', ''),
@@ -242,6 +248,7 @@ MODULE_FIXUPS = {
     "camera_info_manager_py": ([], ["ament_mypy"]),
     "rmw_implementation": (["rmw_fastrtps_dynamic_cpp"], []),
     "rosbag2_py": ([], ["rosbag2_interfaces"]),
+    "rqt_bag": ([], ["std_msgs", "rosgraph_msgs"]),
     "rviz_default_plugins": ([], ["urdf", "urdf_parser_plugin"]),
     "rmw_fastrtps_cpp": (["rmw_fastrtps_shared_cpp"],
                          ["rmw_security_common", "rosidl_typesupport_introspection_c", "rosidl_typesupport_introspection_cpp"]),
