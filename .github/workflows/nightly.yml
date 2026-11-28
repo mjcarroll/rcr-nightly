@@ -48,6 +48,15 @@ jobs:
           ci/setup.sh
           [ "$SINCE_HOURS" = "0" ] && unset SINCE_HOURS
           GENERATE_ONLY=1 tools/run_nightly_master.sh
+      # Loading + analysis of every selected target (no actions run): a registry that does not load or analyse
+      # (unknown repo, bad label, missing dep) fails here instead of in every test shard.
+      - name: Analysis check
+        timeout-minutes: 30
+        working-directory: ros-central-registry/workspace
+        run: |
+          [ -s nightly-targets.txt ] || exit 0
+          bazel build --nobuild --config=ci --keep_going --target_pattern_file=nightly-targets.txt 2>&1 | tail -n 60
+          exit ${PIPESTATUS[0]}
       - id: plan
         env:
           MAX_SHARDS: ${{ inputs.max_shards || '12' }}
