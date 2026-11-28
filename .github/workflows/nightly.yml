@@ -183,7 +183,7 @@ jobs:
         run: |
           for i in 1 2 3; do
             sudo -E timeout 240 apt-get -o DPkg::Lock::Timeout=60 update -qq && \
-            sudo -E timeout 240 apt-get -o DPkg::Lock::Timeout=60 install -y -qq lttng-tools && exit 0
+            sudo -E timeout 240 apt-get -o DPkg::Lock::Timeout=60 install -y -qq lttng-tools liblttng-ust-dev && exit 0
             sleep $((i*15))
           done
           exit 1
